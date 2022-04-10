@@ -573,10 +573,9 @@ namespace LibGit2pp
              * Gets a named remote from this repository. The caller is responsible for
              * managing the returned object.
              * @param remoteName the name of the remote
-             * @param parent the parent for the object that is returned
              * @throws LibGit2pp::Exception
              */
-            Remote* remote(const std::string &remoteName, QObject *parent = 0) const;
+            std::unique_ptr<Remote> remote(const std::string &remoteName) const;
 
             /**
             * Fetch from known remote repository.

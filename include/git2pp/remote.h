@@ -21,7 +21,7 @@
 
 #include "libgit2pp_config.h"
 #include "credentials.h"
-
+#include <list>
 #include <memory>
 
 struct git_remote;
@@ -41,7 +41,6 @@ public:
      * @param remote The raw remote pointer. This needs to be initialized beforehand.
      *        This object takes ownership of this pointer and frees it when this object is destructed.
      * @param credentials Credentials to be used with this remote if any.
-     * @param parent The parent of this QObject.
      */
     explicit Remote(git_remote *remote, const Credentials &credentials = Credentials());
 

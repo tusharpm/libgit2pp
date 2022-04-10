@@ -22,7 +22,7 @@
 #define LIBGIT2PP_REVWALK_H
 
 #include "git2.h"
-
+#include <string>
 #include "libgit2pp_config.h"
 #include "libgit2pp_flags.h"
 

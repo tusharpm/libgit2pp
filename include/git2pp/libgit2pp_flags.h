@@ -31,7 +31,7 @@ public:
     FlagsFromEnumeration(T value) : data{value} {}
 
     operator T() const {
-        return data;
+        return static_cast<T>(data);
     }
 
 private:

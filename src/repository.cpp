@@ -497,11 +497,11 @@ void Repository::remoteAdd(const std::string& name, const std::string& url, bool
 }
 
 
-Remote* Repository::remote(const std::string &remoteName, QObject *parent) const
+std::unique_ptr<Remote> Repository::remote(const std::string &remoteName) const
 {
     git_remote *r = NULL;
     qGitThrow(git_remote_lookup(&r, SAFE_DATA, remoteName.toLatin1()));
-    return new Remote(r, d_ptr->m_remote_credentials.value(remoteName), parent);
+    return std::make_unique<Remote>(r, d_ptr->m_remote_credentials.value(remoteName));
 }
 
 
