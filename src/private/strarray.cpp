@@ -1,5 +1,5 @@
 /******************************************************************************
- * This file is part of the libqgit2 library
+ * This file is part of the libgit2pp library
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 #include "strarray.h"
 #include <QtCore/QByteArray>
 
-namespace LibQGit2 {
+namespace LibGit2pp {
 namespace internal {
 
 static_assert(!std::is_copy_constructible<StrArray>::value, "StrArray must NOT be copy constructible");

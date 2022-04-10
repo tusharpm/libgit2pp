@@ -1,5 +1,5 @@
 /******************************************************************************
- * This file is part of the libqgit2 library
+ * This file is part of the libgit2pp library
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,13 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef LIBQGIT2_REMOTECALLBACKS_H
-#define LIBQGIT2_REMOTECALLBACKS_H
+#ifndef LIBGIT2PP_REMOTECALLBACKS_H
+#define LIBGIT2PP_REMOTECALLBACKS_H
 
-#include "qgitcredentials.h"
+#include "credentials.h"
 #include "git2.h"
 
-namespace LibQGit2
+namespace LibGit2pp
 {
 namespace internal
 {
@@ -61,4 +61,4 @@ private:
 }
 }
 
-#endif // LIBQGIT2_REMOTECALLBACKS_H
+#endif // LIBGIT2PP_REMOTECALLBACKS_H

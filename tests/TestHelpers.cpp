@@ -2,10 +2,10 @@
 
 #include <QDir>
 
-#include "qgitglobal.h"
-#include "qgitrepository.h"
+#include "global.h"
+#include "repository.h"
 
-using namespace LibQGit2;
+using namespace LibGit2pp;
 
 void sleep::ms(int msec)
 {
@@ -90,11 +90,11 @@ void TestBase::cleanup() {
 }
 
 void TestBase::initTestCase() {
-    initLibQGit2();
+    initLibGit2pp();
 }
 
 void TestBase::cleanupTestCase() {
-    shutdownLibQGit2();
+    shutdownLibGit2pp();
 }
 
 void TestBase::initTestRepo()

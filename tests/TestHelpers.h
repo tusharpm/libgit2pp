@@ -1,20 +1,20 @@
-#ifndef LIBQGIT2_TEST_HELPERS_H
-#define LIBQGIT2_TEST_HELPERS_H
+#ifndef LIBGIT2PP_TEST_HELPERS_H
+#define LIBGIT2PP_TEST_HELPERS_H
 
 #include <QTest>
 #include <QDebug>
 
 #include <QThread>
 
-#include "qgitexception.h"
+#include "exception.h"
 
 #define TO_STR(s) #s
 #define VALUE_TO_STR(s) TO_STR(s)
 #define VALUE_TO_QSTR(s) QLatin1String(TO_STR(s))
 
-const QString HttpRemoteUrl("http://anongit.kde.org/libqgit2");
-const QString HttpsRemoteUrl("https://github.com/libqgit2/libqgit2.git");
-const QString GitRemoteUrl("git://anongit.kde.org/libqgit2");
+const QString HttpRemoteUrl("http://anongit.kde.org/libgit2pp");
+const QString HttpsRemoteUrl("https://github.com/libgit2pp/libgit2pp.git");
+const QString GitRemoteUrl("git://anongit.kde.org/libgit2pp");
 const QString ExistingRepository(VALUE_TO_QSTR(TEST_EXISTING_REPOSITORY));
 const QString FileRepositoryUrl("file://" + ExistingRepository + "/.git");
 
@@ -68,4 +68,4 @@ do {\
 #endif
 
 
-#endif  // LIBQGIT2_TEST_HELPERS_H
+#endif  // LIBGIT2PP_TEST_HELPERS_H

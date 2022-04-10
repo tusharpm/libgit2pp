@@ -1,5 +1,5 @@
 /******************************************************************************
- * This file is part of the libqgit2 library
+ * This file is part of the libgit2pp library
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef LIBQGIT2_PATHCODEC_H
-#define LIBQGIT2_PATHCODEC_H
+#ifndef LIBGIT2PP_PATHCODEC_H
+#define LIBGIT2PP_PATHCODEC_H
 
 #include <QByteArray>
 #include <QString>
@@ -30,4 +30,4 @@ public:
     static QString fromLibGit2(const char *path);
 };
 
-#endif // LIBQGIT2_PATHCODEC_H
+#endif // LIBGIT2PP_PATHCODEC_H

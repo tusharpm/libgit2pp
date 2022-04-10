@@ -1,12 +1,12 @@
 
 #include "TestHelpers.h"
 
-#include "qgitrepository.h"
+#include "repository.h"
 #include <QDir>
 #include <QPointer>
 
 
-using namespace LibQGit2;
+using namespace LibGit2pp;
 
 
 class TestInit : public TestBase
@@ -47,7 +47,7 @@ void TestInit::initTestCase()
     QVERIFY(!repo);
 
     // Create a new repository object
-    repo = new LibQGit2::Repository();
+    repo = new LibGit2pp::Repository();
 
     QVERIFY(repo);
 }
@@ -71,7 +71,7 @@ void TestInit::init()
 
     try {
         repo->init(repoPath, false);
-    } catch (const LibQGit2::Exception& ex) {
+    } catch (const LibGit2pp::Exception& ex) {
         QFAIL(ex.what());
     }
 
@@ -91,7 +91,7 @@ void TestInit::initBare()
 
     try {
         repo->init(repoPath, true);
-    } catch (const LibQGit2::Exception& ex) {
+    } catch (const LibGit2pp::Exception& ex) {
         QFAIL(ex.what());
     }
 

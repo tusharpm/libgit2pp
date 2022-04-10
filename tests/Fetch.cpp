@@ -1,5 +1,5 @@
 /******************************************************************************
-* Copyright (C) 2014 Peter Kümmel <syntheticpp@gmx.net>
+* Copyright (C) 2014 Peter Kï¿½mmel <syntheticpp@gmx.net>
 *
 * Permission to use, copy, modify, and distribute the software
 * and its documentation for any purpose and without fee is hereby
@@ -27,11 +27,11 @@
 #include <iostream>
 #include <bitset>
 
-#include "qgitcommit.h"
-#include "qgitrepository.h"
-#include "qgitcredentials.h"
+#include "commit.h"
+#include "repository.h"
+#include "credentials.h"
 
-using namespace LibQGit2;
+using namespace LibGit2pp;
 
 
 class TestFetch : public TestBase
@@ -69,7 +69,7 @@ private:
 
 void TestFetch::remoteAdd()
 {
-    LibQGit2::Repository repo;
+    LibGit2pp::Repository repo;
 
     const QString repoPath = testdir + "/fetch_test/remote_add";
 
@@ -81,7 +81,7 @@ void TestFetch::remoteAdd()
         repo.init(repoPath);
         repo.remoteAdd("kde", HttpRemoteUrl);
     }
-    catch (const LibQGit2::Exception& ex) {
+    catch (const LibGit2pp::Exception& ex) {
         QFAIL(ex.what());
     }
 }
@@ -89,7 +89,7 @@ void TestFetch::remoteAdd()
 
 void TestFetch::remoteAddExisiting()
 {
-    LibQGit2::Repository repo;
+    LibGit2pp::Repository repo;
 
     const QString repoPath = testdir + "/fetch_test/add_exisiting";
 
@@ -101,7 +101,7 @@ void TestFetch::remoteAddExisiting()
         repo.remoteAdd("kde", HttpRemoteUrl);
         repo.remoteAdd("kde", HttpRemoteUrl);
     }
-    catch (const LibQGit2::Exception& ex) {
+    catch (const LibGit2pp::Exception& ex) {
         QFAIL(ex.what());
     }
 
@@ -112,7 +112,7 @@ void TestFetch::remoteAddExisiting()
 
 void TestFetch::remoteAddExisitingDifferentUrl()
 {
-    LibQGit2::Repository repo;
+    LibGit2pp::Repository repo;
 
     const QString repoPath = testdir + "/fetch_test/add_existing_url";
 
@@ -123,14 +123,14 @@ void TestFetch::remoteAddExisitingDifferentUrl()
         repo.init(repoPath);
         repo.remoteAdd("kde", HttpRemoteUrl);
     }
-    catch (const LibQGit2::Exception& ex) {
+    catch (const LibGit2pp::Exception& ex) {
         QFAIL(ex.what());
     }
 
     try {
         repo.remoteAdd("kde", "XYZ");
     }
-    catch (const LibQGit2::Exception&) {
+    catch (const LibGit2pp::Exception&) {
         return;
     }
 
@@ -140,7 +140,7 @@ void TestFetch::remoteAddExisitingDifferentUrl()
 
 void TestFetch::fetch(const QString& branch, const QString dirname)
 {
-    LibQGit2::Repository repo;
+    LibGit2pp::Repository repo;
 
     const QString repoPath = testdir + "/fetch_test/" + dirname;
 
@@ -152,7 +152,7 @@ void TestFetch::fetch(const QString& branch, const QString dirname)
         repo.remoteAdd("kde", HttpRemoteUrl);
         repo.fetch("kde", branch);
     }
-    catch (const LibQGit2::Exception& ex) {
+    catch (const LibGit2pp::Exception& ex) {
         QFAIL(ex.what());
     }
 
@@ -176,7 +176,7 @@ void TestFetch::fetchAdditionalBranch()
 {
     fetch("master", "fetch_additional");
 
-    LibQGit2::Repository repo;
+    LibGit2pp::Repository repo;
 
     const QString repoPath = testdir + "/fetch_test/fetch_additional";
 
@@ -184,7 +184,7 @@ void TestFetch::fetchAdditionalBranch()
         repo.open(repoPath);
         repo.fetch("kde", "develop");
     }
-    catch (const LibQGit2::Exception& ex) {
+    catch (const LibGit2pp::Exception& ex) {
         QFAIL(ex.what());
     }
 
@@ -194,7 +194,7 @@ void TestFetch::fetchAdditionalBranch()
 
 void TestFetch::remoteBranches()
 {
-    LibQGit2::Repository repo;
+    LibGit2pp::Repository repo;
 
     const QString repoPath = testdir + "/fetch_test/remote_branches";
 
@@ -207,7 +207,7 @@ void TestFetch::remoteBranches()
         repo.remoteAdd("kde", HttpRemoteUrl);
         heads = repo.remoteBranches("kde");
     }
-    catch (const LibQGit2::Exception& ex) {
+    catch (const LibGit2pp::Exception& ex) {
         QFAIL(ex.what());
     }
 

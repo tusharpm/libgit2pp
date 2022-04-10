@@ -20,20 +20,20 @@
 
 #include "TestHelpers.h"
 
-#include "qgitindex.h"
-#include "qgitrebase.h"
-#include "qgitremote.h"
-#include "qgitrepository.h"
-#include "qgitrevwalk.h"
-#include "qgitdiff.h"
-#include "qgitdiffdelta.h"
-#include "qgittree.h"
+#include "index.h"
+#include "rebase.h"
+#include "remote.h"
+#include "repository.h"
+#include "revwalk.h"
+#include "diff.h"
+#include "diffdelta.h"
+#include "tree.h"
 
 #include <QFile>
 #include <QFileInfo>
 #include <QPointer>
 
-using namespace LibQGit2;
+using namespace LibGit2pp;
 
 class TestRebase : public TestBase
 {

@@ -1,4 +1,4 @@
-// A try to port libgit2 status.c example to libqgit2
+// A try to port libgit2 status.c example to libgit2pp
 
 
 #include "TestHelpers.h"
@@ -10,12 +10,12 @@
 
 #include <bitset>
 
-#include "qgitcommit.h"
-#include "qgitrepository.h"
-#include "qgitrevwalk.h"
+#include "commit.h"
+#include "repository.h"
+#include "revwalk.h"
 
 
-using namespace LibQGit2;
+using namespace LibGit2pp;
 
 
 class TestRevision : public TestBase

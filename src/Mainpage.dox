@@ -1,4 +1,4 @@
-/** @mainpage The libqgit2 API Reference
+/** @mainpage The libgit2pp API Reference
 
 <p><b>
 Overview |
@@ -7,9 +7,9 @@ Overview |
 @ref search
 </b></p>
 
-This is a quick description of libqgit2.
+This is a quick description of libgit2pp.
 
-Official repository is <a href="https://projects.kde.org/projects/playground/libs/libqgit2">on KDE Projects</a>.
+Official repository is <a href="https://projects.kde.org/projects/playground/libs/libgit2pp">on KDE Projects</a>.
 
 Feel free to use, hack, modify and report issues.
 You will find in the Related Pages of this documentations a Todo list.

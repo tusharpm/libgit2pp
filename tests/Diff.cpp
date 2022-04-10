@@ -19,13 +19,13 @@
 */
 
 #include "TestHelpers.h"
-#include "qgitrepository.h"
-#include "qgittree.h"
-#include "qgitdiff.h"
-#include "qgitdiffdelta.h"
-#include "qgitdifffile.h"
+#include "repository.h"
+#include "tree.h"
+#include "diff.h"
+#include "diffdelta.h"
+#include "difffile.h"
 
-using namespace LibQGit2;
+using namespace LibGit2pp;
 
 class TestDiff : public TestBase
 {
@@ -43,7 +43,7 @@ void TestDiff::testDiffFileList()
 
     try {
         Tree oldTree = repo.lookupRevision("4146952e67^{tree}").toTree(); // These commits are chosen right from the start of
-        Tree newTree = repo.lookupRevision("e3f21f35e5^{tree}").toTree(); // the development history of libqgit2
+        Tree newTree = repo.lookupRevision("e3f21f35e5^{tree}").toTree(); // the development history of libgit2pp
         Diff diff = repo.diffTrees(oldTree, newTree);
         size_t numD = diff.numDeltas();
         QStringList expectedPaths = QStringList() << "CMakeLists.txt" << "src/blob.cpp";

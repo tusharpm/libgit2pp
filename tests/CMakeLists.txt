@@ -1,11 +1,8 @@
 cmake_minimum_required(VERSION 3.1)
 
-find_package(Qt5 REQUIRED Test)
-
 set(testdir ${CMAKE_BINARY_DIR}/TestDir)
 file(MAKE_DIRECTORY ${testdir})
 add_definitions(-DTEST_DIR=${testdir})
-remove_definitions(-DMAKE_LIBQGIT2_LIB)
 
 set(existing_repository ${testdir}/existing_repository)
 add_definitions(-DTEST_EXISTING_REPOSITORY=${existing_repository})
@@ -24,14 +21,10 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
 
-set(helper ${CMAKE_CURRENT_SOURCE_DIR}/TestHelpers)
-
 macro(addTest name)
-    set(_source ${CMAKE_CURRENT_SOURCE_DIR}/${name}.cpp)
     set(testname test${name})
-    add_executable(${testname} ${_source} ${helper}.h ${helper}.cpp)
-    target_link_libraries(${testname} qgit2 git2 Qt5::Core Qt5::Test)
-    set_target_properties(${testname} PROPERTIES AUTOMOC ON)
+    add_executable(${testname} ${name}.cpp TestHelpers.h TestHelpers.cpp)
+    target_link_libraries(${testname} git2pp git2)
     add_test(NAME ${testname} COMMAND ${testname})
 endmacro()
 

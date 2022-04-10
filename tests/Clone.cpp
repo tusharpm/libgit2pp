@@ -1,5 +1,5 @@
 /******************************************************************************
-* Copyright (C) 2014 Peter Kümmel <syntheticpp@gmx.net>
+* Copyright (C) 2014 Peter Kï¿½mmel <syntheticpp@gmx.net>
 *
 * Permission to use, copy, modify, and distribute the software
 * and its documentation for any purpose and without fee is hereby
@@ -27,13 +27,13 @@
 #include <iostream>
 #include <bitset>
 
-#include "qgitcommit.h"
-#include "qgitrepository.h"
-#include "qgitcredentials.h"
+#include "commit.h"
+#include "repository.h"
+#include "credentials.h"
 
 #include "TestHelpers.h"
 
-using namespace LibQGit2;
+using namespace LibGit2pp;
 
 
 class TestClone : public TestBase

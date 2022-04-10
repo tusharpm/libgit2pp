@@ -1,5 +1,5 @@
 /******************************************************************************
- * This file is part of the libqgit2 library
+ * This file is part of the libgit2pp library
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,15 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef LIBQGIT2_ANNOTATEDCOMMIT_H
-#define LIBQGIT2_ANNOTATEDCOMMIT_H
+#ifndef LIBGIT2PP_ANNOTATEDCOMMIT_H
+#define LIBGIT2PP_ANNOTATEDCOMMIT_H
 
-#include "qgitref.h"
-#include "qgitrepository.h"
+#include "ref.h"
+#include "repository.h"
 #include "git2.h"
-#include <QSharedPointer>
+#include <memory>
 
-namespace LibQGit2
+namespace LibGit2pp
 {
 namespace internal
 {
@@ -41,4 +41,4 @@ private:
 };
 }
 }
-#endif // LIBQGIT2_ANNOTATEDCOMMIT_H
+#endif // LIBGIT2PP_ANNOTATEDCOMMIT_H

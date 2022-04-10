@@ -1,5 +1,5 @@
 /******************************************************************************
- * This file is part of the libqgit2 library
+ * This file is part of the libgit2pp library
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,11 +17,11 @@
  */
 
 #include "remotecallbacks.h"
-#include "qgitcredentials.h"
-#include "credentials_p.h"
-#include "qgitexception.h"
+#include "credentials.h"
+#include "private/credentials.h"
+#include "exception.h"
 
-namespace LibQGit2
+namespace LibGit2pp
 {
 namespace internal
 {

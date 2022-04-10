@@ -1,5 +1,5 @@
 #############################################################################
-# This file is part of the libqgit2 library
+# This file is part of the libgit2pp library
 # Copyright (C) 2011 Laszlo Papp
 #
 # This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-# CMake build script for the libqgit2 project
+# CMake build script for the libgit2pp project
 #
 # Building (out of source build):
 # > mkdir build && cd build
@@ -30,10 +30,7 @@
 # > cmake --build . --target install
 
 cmake_minimum_required(VERSION 3.1)
-project(libqgit2)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+project(libgit2pp)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}")
 
@@ -43,16 +40,14 @@ if(WIN32) # Dll's into bin
     set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 endif()
 
-find_package(Qt5 REQUIRED Core Network)
+file(STRINGS "include/git2pp.h" GIT2PP_HEADER REGEX "^#define LIBGIT2PP_VERSION \"[^\"]*\"$")
+string(REGEX REPLACE "^.*LIBGIT2PP_VERSION \"([0-9]+).*$" "\\1" LIBGIT2PP_VERSION_MAJOR "${GIT2PP_HEADER}")
+string(REGEX REPLACE "^.*LIBGIT2PP_VERSION \"[0-9]+\\.([0-9]+).*$" "\\1" LIBGIT2PP_VERSION_MINOR  "${GIT2PP_HEADER}")
+string(REGEX REPLACE "^.*LIBGIT2PP_VERSION \"[0-9]+\\.[0-9]+\\.([0-9]+).*$" "\\1" LIBGIT2PP_VERSION_REV "${GIT2PP_HEADER}")
+set(LIBGIT2PP_VERSION_STRING "${LIBGIT2PP_VERSION_MAJOR}.${LIBGIT2PP_VERSION_MINOR}.${LIBGIT2PP_VERSION_REV}")
 
-file(STRINGS "qgit2.h" QGIT2_HEADER REGEX "^#define LIBQGIT2_VERSION \"[^\"]*\"$")
-string(REGEX REPLACE "^.*LIBQGIT2_VERSION \"([0-9]+).*$" "\\1" LIBQGIT2_VERSION_MAJOR "${QGIT2_HEADER}")
-string(REGEX REPLACE "^.*LIBQGIT2_VERSION \"[0-9]+\\.([0-9]+).*$" "\\1" LIBQGIT2_VERSION_MINOR  "${QGIT2_HEADER}")
-string(REGEX REPLACE "^.*LIBQGIT2_VERSION \"[0-9]+\\.[0-9]+\\.([0-9]+).*$" "\\1" LIBQGIT2_VERSION_REV "${QGIT2_HEADER}")
-set(LIBQGIT2_VERSION_STRING "${LIBQGIT2_VERSION_MAJOR}.${LIBQGIT2_VERSION_MINOR}.${LIBQGIT2_VERSION_REV}")
-
-file(STRINGS "qgit2.h" QGIT2_HEADER_SOVERSION REGEX "^#define LIBQGIT2_SOVERSION [0-9]+$")
-string(REGEX REPLACE "^.*LIBQGIT2_SOVERSION ([0-9]+)$" "\\1" LIBQGIT2_SOVERSION "${QGIT2_HEADER_SOVERSION}")
+file(STRINGS "include/git2pp.h" GIT2PP_HEADER_SOVERSION REGEX "^#define LIBGIT2PP_SOVERSION [0-9]+$")
+string(REGEX REPLACE "^.*LIBGIT2PP_SOVERSION ([0-9]+)$" "\\1" LIBGIT2PP_SOVERSION "${GIT2PP_HEADER_SOVERSION}")
 
 # Installation paths
 set(INSTALL_BIN bin CACHE PATH "Where to install binaries to.")
@@ -100,44 +95,45 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src ${LIBGIT2_INCLUDE_DIR})
 
 # Collect files
 file(GLOB_RECURSE SRC src/*.cpp)
-file(GLOB QGIT2_HEADERS src/qgit*.h src/libqgit2_config.h)
-file(GLOB_RECURSE QGIT2_PRIVATE_HEADERS src/*.h)
-list(REMOVE_ITEM QGIT2_PRIVATE_HEADERS ${QGIT2_HEADERS})
+file(GLOB_RECURSE GIT2PP_HEADERS include/*.h)
+file(GLOB_RECURSE GIT2PP_PRIVATE_HEADERS src/private/*.h)
 
 message(STATUS)
-message(STATUS "========== LIBQGIT2 Build Information ==========")
-message(STATUS "Build Version: ${LIBQGIT2_VERSION_STRING}")
+message(STATUS "========== LIBGIT2PP Build Information ==========")
+message(STATUS "Build Version: ${LIBGIT2PP_VERSION_STRING}")
 message(STATUS "Install Prefix: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS)
 message(STATUS "To change any of these options, override them using -D{OPTION_NAME} on the commandline.")
-message(STATUS "To build and install LIBQGIT2, run \"make\" and \"make install\"")
+message(STATUS "To build and install LIBGIT2PP, run \"make\" and \"make install\"")
 message(STATUS)
 
-# Compile and link libqgit2
-add_definitions(-DMAKE_LIBQGIT2_LIB)
-add_library(qgit2 ${SRC} ${QGIT2_HEADERS} ${QGIT2_PRIVATE_HEADERS})
-target_link_libraries(qgit2 ${LIBGIT2_LIBRARIES} Qt5::Core Qt5::Network)
-set_target_properties(qgit2 PROPERTIES VERSION ${LIBQGIT2_VERSION_STRING})
-set_target_properties(qgit2 PROPERTIES SOVERSION ${LIBQGIT2_SOVERSION})
-set_target_properties(qgit2 PROPERTIES AUTOMOC ON)
+# Compile and link libgit2pp
+add_library(git2pp ${SRC} ${GIT2PP_HEADERS} ${GIT2PP_PRIVATE_HEADERS})
+target_compile_definitions(git2pp PRIVATE MAKE_LIBGIT2PP_LIB)
+target_include_directories(git2pp PRIVATE include)
+target_link_libraries(git2pp ${LIBGIT2_LIBRARIES})
+set_target_properties(git2pp PROPERTIES
+    VERSION ${LIBGIT2PP_VERSION_STRING}
+    SOVERSION ${LIBGIT2PP_SOVERSION}
+)
 
 # Install
-install(TARGETS qgit2
+install(TARGETS git2pp
     RUNTIME DESTINATION ${INSTALL_BIN}
     LIBRARY DESTINATION ${INSTALL_LIB}
     ARCHIVE DESTINATION ${INSTALL_LIB}
+    INCLUDES DESTINATION ${INSTALL_INC}
 )
 
-install(FILES ${QGIT2_HEADERS} DESTINATION ${INSTALL_INC}/qgit2 COMPONENT Devel)
-install(FILES qgit2.h DESTINATION ${INSTALL_INC} COMPONENT Devel)
+install(FILES ${GIT2PP_HEADERS} DESTINATION ${INSTALL_INC} COMPONENT Devel)
 
 #Packaging options
-set(CPACK_GENERATOR "RPM;TGZ")
-set(CPACK_PACKAGE_NAME "LIBQGIT2")
-set(CPACK_PACKAGE_FILE_NAME "LIBQGIT2-${LIBQGIT2_VERSION_STRING}")
-set(CPACK_PACKAGE_VERSION "${LIBQGIT2_VERSION_MAJOR}.${LIBQGIT2_VERSION_MINOR}.${LIBQGIT2_VERSION_REV}")
-set(CPACK_PACKAGE_CONTACT "Laszlo Papp <djszapi@archlinux.us>")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libgit2 bindings for Qt")
+set(CPACK_GENERATOR "DEB;RPM;TGZ")
+set(CPACK_PACKAGE_NAME "LIBGIT2PP")
+set(CPACK_PACKAGE_FILE_NAME "LIBGIT2PP-${LIBGIT2PP_VERSION_STRING}")
+set(CPACK_PACKAGE_VERSION "${LIBGIT2PP_VERSION_MAJOR}.${LIBGIT2PP_VERSION_MINOR}.${LIBGIT2PP_VERSION_REV}")
+set(CPACK_PACKAGE_CONTACT "Tushar Maheshwari <tushar27192@gmail.com>")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libgit2 bindings for C++")
 include(InstallRequiredSystemLibraries)
 include(CPack)
 

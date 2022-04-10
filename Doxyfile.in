@@ -1,4 +1,4 @@
-PROJECT_NAME = "libqgit2"
+PROJECT_NAME = "libgit2pp"
 
 INPUT = @CMAKE_CURRENT_SOURCE_DIR@/src/
 FILE_PATTERNS = *.h *.dox

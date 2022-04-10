@@ -20,13 +20,13 @@
 
 #include "TestHelpers.h"
 
-#include "qgitrepository.h"
-#include "qgitremote.h"
+#include "repository.h"
+#include "remote.h"
 
 #include <QPointer>
 #include <QDir>
 
-using namespace LibQGit2;
+using namespace LibGit2pp;
 
 class TestRepository : public TestBase
 {
@@ -138,7 +138,7 @@ void TestRepository::testShouldIgnore()
     EXPECT_THROW(repo->shouldIgnore(dir.absoluteFilePath(ignoredFileName)), Exception);
 }
 
-namespace LibQGit2 {
+namespace LibGit2pp {
 
 bool operator==(const Repository::Identity &lhs, const Repository::Identity &rhs)
 {

@@ -20,11 +20,11 @@
 
 #include "TestHelpers.h"
 
-#include "qgitrepository.h"
-#include "qgitconfig.h"
-#include "qgitremote.h"
+#include "repository.h"
+#include "config.h"
+#include "remote.h"
 
-using namespace LibQGit2;
+using namespace LibGit2pp;
 
 
 class TestPush : public TestBase
@@ -83,7 +83,7 @@ void TestPush::pushToNewTargetBranch()
         QScopedPointer<Remote> remote(repo.remote("origin"));
         remote->push(QStringList("refs/heads/master:refs/heads/" + targetBranch));
     }
-    catch (const LibQGit2::Exception& ex) {
+    catch (const LibGit2pp::Exception& ex) {
         QFAIL(ex.what());
     }
 

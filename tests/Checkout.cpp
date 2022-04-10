@@ -1,5 +1,5 @@
 /******************************************************************************
-* Copyright (C) 2014 Peter Kümmel <syntheticpp@gmx.net>
+* Copyright (C) 2014 Peter Kï¿½mmel <syntheticpp@gmx.net>
 *
 * Permission to use, copy, modify, and distribute the software
 * and its documentation for any purpose and without fee is hereby
@@ -21,13 +21,13 @@
 */
 #include "TestHelpers.h"
 
-#include "qgitrepository.h"
-#include "qgitcommit.h"
-#include "qgitdiffdelta.h"
-#include "qgitdifffile.h"
+#include "repository.h"
+#include "commit.h"
+#include "diffdelta.h"
+#include "difffile.h"
 #include <QFile>
 
-using namespace LibQGit2;
+using namespace LibGit2pp;
 
 
 class TestCheckout : public TestBase

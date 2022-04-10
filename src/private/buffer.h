@@ -1,5 +1,5 @@
 /******************************************************************************
- * This file is part of the libqgit2 library
+ * This file is part of the libgit2pp library
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,14 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef LIBQGIT2_BUFFER_H
-#define LIBQGIT2_BUFFER_H
+#ifndef LIBGIT2PP_BUFFER_H
+#define LIBGIT2PP_BUFFER_H
 
 #include "git2.h"
 
 #include <QString>
 
-namespace LibQGit2 {
+namespace LibGit2pp {
 namespace internal {
 
 class Buffer
@@ -43,4 +43,4 @@ private:
 }
 }
 
-#endif // LIBQGIT2_BUFFER_H
+#endif // LIBGIT2PP_BUFFER_H
