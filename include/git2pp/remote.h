@@ -34,10 +34,8 @@ namespace LibGit2pp {
  * @ingroup LibGit2pp
  * @{
  */
-class LIBGIT2PP_EXPORT Remote : public QObject
+class LIBGIT2PP_EXPORT Remote
 {
-    Q_OBJECT
-
 public:
     /**
      * @param remote The raw remote pointer. This needs to be initialized beforehand.
@@ -45,7 +43,7 @@ public:
      * @param credentials Credentials to be used with this remote if any.
      * @param parent The parent of this QObject.
      */
-    explicit Remote(git_remote *remote, const Credentials &credentials = Credentials(), QObject *parent = 0);
+    explicit Remote(git_remote *remote, const Credentials &credentials = Credentials());
 
     /**
      * Gets the URL specified for this remote.
@@ -57,7 +55,7 @@ public:
      * @param refSpecs The refspecs to use for pushing. If left empty the configured refspecs will be used.
      * @throws LibGit2pp::Exception
      */
-    void push(const std::list<std::string> &refSpecs = std::list<std::string>());
+    void push(const std::list<std::string> &refSpecs = {});
 
     git_remote* data() const;
 
@@ -65,7 +63,7 @@ signals:
     void transferProgress(int);
 
 private:
-    Q_DISABLE_COPY(Remote)
+    // Q_DISABLE_COPY(Remote)
 
     struct Private;
     std::shared_ptr<Private> d_ptr;

@@ -27,6 +27,7 @@ template <typename T>
 class FlagsFromEnumeration
 {
 public:
+    FlagsFromEnumeration() : data{0} {}
     FlagsFromEnumeration(T value) : data{value} {}
 
     operator T() const {

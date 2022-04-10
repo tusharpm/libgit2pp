@@ -24,6 +24,7 @@
 #include "git2.h"
 
 #include "libgit2pp_config.h"
+#include "libgit2pp_flags.h"
 
 namespace LibGit2pp
 {
@@ -55,7 +56,7 @@ public:
         Reverse = GIT_SORT_REVERSE
     };
 
-    Q_DECLARE_FLAGS(SortModes, SortMode) //!< Combination of SortMode
+    using SortModes = FlagsFromEnumeration<SortMode>; //!< Combination of SortMode
 
     /**
      * Allocate a new revision walker to iterate through a repo.
@@ -238,8 +239,6 @@ private:
     const Repository* m_repository;
     git_revwalk* m_revWalk;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(RevWalk::SortModes)
 
 /**@}*/
 }

@@ -30,7 +30,6 @@ using namespace LibGit2pp;
 
 class TestRepository : public TestBase
 {
-    Q_OBJECT
 public:
     TestRepository() :
         branchName("new_branch")

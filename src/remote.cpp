@@ -61,8 +61,7 @@ private:
 };
 
 
-Remote::Remote(git_remote *remote, const Credentials &credentials, QObject *parent) :
-    QObject(parent),
+Remote::Remote(git_remote *remote, const Credentials &credentials) :
     d_ptr(new Private(*this, remote, credentials))
 {
 }

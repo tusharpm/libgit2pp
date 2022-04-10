@@ -23,6 +23,7 @@
 #include "git2.h"
 
 #include "libgit2pp_config.h"
+#include "libgit2pp_flags.h"
 
 namespace LibGit2pp
 {
@@ -61,9 +62,9 @@ public:
         SortCaseInsensitively = GIT_STATUS_OPT_SORT_CASE_INSENSITIVELY
     };
 
-    Q_DECLARE_FLAGS(StatusFlags, StatusFlag)
+    using StatusFlags = FlagsFromEnumeration<StatusFlag>;
 
-    explicit StatusOptions(ShowType showType = ShowIndexAndWorkdir, StatusFlags statusFlags = StatusFlags());
+    explicit StatusOptions(ShowType showType = ShowIndexAndWorkdir, StatusFlags statusFlags = {});
 
     explicit StatusOptions(git_status_options status_options);
 
@@ -88,9 +89,6 @@ private:
     ShowType show_type;
     StatusFlags status_flags;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(StatusOptions::StatusFlags)
-
 
 /**@}*/
 }

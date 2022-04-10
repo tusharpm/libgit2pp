@@ -29,8 +29,6 @@ using namespace LibGit2pp;
 
 class TestPush : public TestBase
 {
-    Q_OBJECT
-
 public:
     TestPush() :
         testdir(VALUE_TO_QSTR(TEST_DIR) + "/push_test/"),

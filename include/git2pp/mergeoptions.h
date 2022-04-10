@@ -22,6 +22,7 @@
 #include "git2.h"
 
 #include "libgit2pp_config.h"
+#include "libgit2pp_flags.h"
 
 namespace LibGit2pp
 {
@@ -50,7 +51,7 @@ namespace LibGit2pp
         enum Flag {
             FindRenames = 1u << 0   ///< Enables merging between a renamed and modified file
         };
-        Q_DECLARE_FLAGS(Flags, Flag)
+        using Flags = FlagsFromEnumeration<Flag>;
 
         /**
          * Construct a new MergeOptions.
@@ -64,8 +65,6 @@ namespace LibGit2pp
     private:
         git_merge_options d;
     };
-
-    Q_DECLARE_OPERATORS_FOR_FLAGS(MergeOptions::Flags)
 
     /** @} */
 

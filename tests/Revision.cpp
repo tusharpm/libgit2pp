@@ -20,8 +20,6 @@ using namespace LibGit2pp;
 
 class TestRevision : public TestBase
 {
-    Q_OBJECT
-
 private slots:
     void init();
     void cleanup();

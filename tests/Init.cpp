@@ -11,8 +11,6 @@ using namespace LibGit2pp;
 
 class TestInit : public TestBase
 {
-    Q_OBJECT
-
 public:
     TestInit();
     ~TestInit();

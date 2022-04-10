@@ -23,6 +23,7 @@
 #include <list>
 #include <memory>
 #include "libgit2pp_config.h"
+#include "libgit2pp_flags.h"
 
 namespace LibGit2pp
 {
@@ -59,7 +60,7 @@ namespace LibGit2pp
             UnmergedUseTheirs = 1u << 8, ///< For unmerged files, checkout stage 3 from index
             RecreateMissing = 1u << 9    ///< Allow checkout to recreate missing files
         };
-        Q_DECLARE_FLAGS(Flags, Flag)
+        using Flags = FlagsFromEnumeration<Flag>;
 
         /**
          * Constructs a new CheckoutOptions.
@@ -88,8 +89,6 @@ namespace LibGit2pp
         class Private;
         std::shared_ptr<Private> d_ptr;
     };
-
-    Q_DECLARE_OPERATORS_FOR_FLAGS(CheckoutOptions::Flags)
 
     /** @} */
 

@@ -37,7 +37,6 @@ using namespace LibGit2pp;
 
 class TestRebase : public TestBase
 {
-    Q_OBJECT
 public:
     TestRebase();
 

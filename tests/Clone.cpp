@@ -36,8 +36,6 @@ using namespace LibGit2pp;
 
 class TestClone : public TestBase
 {
-    Q_OBJECT
-
 public:
     TestClone();
 

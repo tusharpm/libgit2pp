@@ -36,8 +36,6 @@ using namespace LibGit2pp;
 
 class TestFetch : public TestBase
 {
-    Q_OBJECT
-
 public:
     TestFetch() : testdir(VALUE_TO_STR(TEST_DIR)) {}
 

@@ -31,9 +31,7 @@ using namespace LibGit2pp;
 
 class TestCheckout : public TestBase
 {
-    Q_OBJECT
-
-private slots:
+private:
     void checkoutRemote();
     void checkoutRemoteKde();
     void checkoutCommitAsTree();

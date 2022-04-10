@@ -82,7 +82,7 @@ Exception::~Exception() throw()
 
 const char *Exception::what() const throw()
 {
-    return m_msg;
+    return m_msg.c_str();
 }
 
 QByteArray Exception::message() const throw()

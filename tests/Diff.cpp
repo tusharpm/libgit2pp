@@ -29,8 +29,6 @@ using namespace LibGit2pp;
 
 class TestDiff : public TestBase
 {
-    Q_OBJECT
-
 private slots:
     void testDiffFileList();
 };
