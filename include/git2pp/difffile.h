@@ -20,7 +20,7 @@
 #define LIBGIT2PP_DIFFFILE_H
 
 #include "libgit2pp_config.h"
-
+#include <string>
 #include "git2.h"
 
 namespace LibGit2pp {

@@ -78,7 +78,7 @@ void TestRebase::cleanup()
 OId TestRebase::commitIndexToRef(const std::string &refSpec)
 {
     Tree index = repo->lookupTree(repo->index().createTree());
-    QList<Commit> parents;
+    std::list<Commit> parents;
     parents.append(repo->lookupCommit(repo->head().target()));
     return repo->createCommit(index, parents, sig, sig, "commit", refSpec);
 }

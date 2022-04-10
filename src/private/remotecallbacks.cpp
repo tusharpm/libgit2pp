@@ -16,10 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "remotecallbacks.h"
-#include "credentials.h"
+#include "git2pp/remotecallbacks.h"
+#include "git2pp/credentials.h"
+#include "git2pp/exception.h"
 #include "private/credentials.h"
-#include "exception.h"
 
 namespace LibGit2pp
 {

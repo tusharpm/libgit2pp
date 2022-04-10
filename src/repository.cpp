@@ -282,7 +282,7 @@ Reference Repository::createSymbolicRef(const std::string& name, const std::stri
     return Reference(ref);
 }
 
-OId Repository::createCommit(const Tree& tree, const QList<Commit>& parents, const Signature& author, const Signature& committer, const std::string& message, const std::string &ref)
+OId Repository::createCommit(const Tree& tree, const std::list<Commit>& parents, const Signature& author, const Signature& committer, const std::string& message, const std::string &ref)
 {
     QVector<const git_commit*> p;
     foreach (const Commit& parent, parents) {
@@ -516,7 +516,7 @@ void Repository::fetch(const std::string& name, const std::string& head, const s
     StrArray refs;
     if (!head.isEmpty()) {
         const std::string refspec = std::string("refs/heads/%2:refs/remotes/%1/%2").arg(name).arg(head);
-        refs = StrArray(QList<QByteArray>() << refspec.toLatin1());
+        refs = StrArray(std::list<QByteArray>() << refspec.toLatin1());
     }
 
     internal::RemoteCallbacks remoteCallbacks(d_ptr.data(), d_ptr->m_remote_credentials.value(name));

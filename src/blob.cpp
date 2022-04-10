@@ -22,8 +22,6 @@
 #include "git2pp/oid.h"
 #include "git2pp/repository.h"
 
-#include <QtCore/QFile>
-
 namespace LibGit2pp
 {
 

@@ -80,9 +80,9 @@ public:
         native.target_directory = m_target_directory.constData();
     }
 
-    void setPaths(const QList<std::string> &paths)
+    void setPaths(const std::list<std::string> &paths)
     {
-        QList<QByteArray> pathByteArrays;
+        std::list<QByteArray> pathByteArrays;
         pathByteArrays.reserve(paths.size());
         foreach (const std::string &path, paths) {
             pathByteArrays.append(PathCodec::toLibGit2(path));
@@ -113,7 +113,7 @@ void CheckoutOptions::setTargetDirectory(const std::string &dir)
     d_ptr->setTargetDirectory(dir);
 }
 
-void CheckoutOptions::setPaths(const QList<std::string> &paths)
+void CheckoutOptions::setPaths(const std::list<std::string> &paths)
 {
     d_ptr->setPaths(paths);
 }

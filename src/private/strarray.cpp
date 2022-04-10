@@ -27,7 +27,7 @@ static_assert(std::is_move_constructible<StrArray>::value, "StrArray must be mov
 static_assert(!std::is_copy_assignable<StrArray>::value, "StrArray must NOT be copy assignable");
 static_assert(std::is_move_assignable<StrArray>::value, "StrArray must be move assignable");
 
-StrArray::StrArray(const QList<QByteArray> &list) :
+StrArray::StrArray(const std::list<QByteArray> &list) :
     m_strings(list)
 {
     m_data.count = size_t(m_strings.size());

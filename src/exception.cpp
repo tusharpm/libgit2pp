@@ -71,7 +71,7 @@ Exception::Exception() :
 }
 
 Exception::Exception(const std::string& msg, Category category) :
-    m_msg(msg.toLatin1()),
+    m_msg(msg),
     m_category(category)
 {
 }

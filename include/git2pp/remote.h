@@ -57,7 +57,7 @@ public:
      * @param refSpecs The refspecs to use for pushing. If left empty the configured refspecs will be used.
      * @throws LibGit2pp::Exception
      */
-    void push(const QList<std::string> &refSpecs = QList<std::string>());
+    void push(const std::list<std::string> &refSpecs = std::list<std::string>());
 
     git_remote* data() const;
 

@@ -40,10 +40,10 @@ struct Remote::Private : public internal::RemoteListener
         return 0;
     }
 
-    void push(const QList<std::string> &refSpecs)
+    void push(const std::list<std::string> &refSpecs)
     {
-        QList<QByteArray> baRefSpecs;
-        foreach (const std::string &ref, refSpecs) {
+        std::list<QByteArray> baRefSpecs;
+        for (const std::string &ref : refSpecs) {
             baRefSpecs.append(ref.toLatin1());
         }
         internal::StrArray refspecs(baRefSpecs);
@@ -72,7 +72,7 @@ std::string Remote::url() const
     return std::string::fromLatin1(git_remote_url(data()));
 }
 
-void Remote::push(const QList<std::string> &refSpecs)
+void Remote::push(const std::list<std::string> &refSpecs)
 {
     d_ptr->push(refSpecs);
 }

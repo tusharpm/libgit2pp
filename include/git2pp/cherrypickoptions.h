@@ -57,7 +57,6 @@ namespace LibGit2pp
     private:
         class Private;
         std::shared_ptr<Private> d_ptr;
-        Q_DECLARE_PRIVATE()
     };
 
     /** @} */

@@ -19,8 +19,8 @@
 #ifndef LIBGIT2PP_ANNOTATEDCOMMIT_H
 #define LIBGIT2PP_ANNOTATEDCOMMIT_H
 
-#include "ref.h"
-#include "repository.h"
+#include "git2pp/ref.h"
+#include "git2pp/repository.h"
 #include "git2.h"
 #include <memory>
 

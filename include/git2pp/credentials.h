@@ -64,8 +64,6 @@ public:
 
 private:
     std::shared_ptr<CredentialsPrivate> d_ptr;
-    Q_DECLARE_PRIVATE(Credentials)
-
     Credentials(CredentialsPrivate &p);
 };
 
