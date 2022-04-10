@@ -19,6 +19,7 @@
  */
 
 #include "git2pp/oid.h"
+#include <algorithm>
 #include "git2pp/exception.h"
 
 namespace LibGit2pp
@@ -49,16 +50,16 @@ bool OId::isValid() const
              );
 }
 
-void OId::fromHex(const QByteArray& hex)
+void OId::fromHex(const std::string& hex)
 {
-    int len = qMin(hex.length(), GIT_OID_HEXSZ);
-    qGitThrow(git_oid_fromstrn(data(), hex.constData(), len));
+    int len = std::min(hex.length(), GIT_OID_HEXSZ);
+    qGitThrow(git_oid_fromstrn(data(), hex.data(), len));
     d.resize(len / 2);
 }
 
 void OId::fromString(const std::string& string)
 {
-    fromHex(string.toUtf8());
+    fromHex(string);
 }
 
 
@@ -68,12 +69,10 @@ void OId::fromRawData(const QByteArray& raw)
     d = raw;
 }
 
-OId OId::stringToOid(const QByteArray& string)
+OId OId::stringToOid(const std::string& string)
 {
-    int len = qMin(string.length(), GIT_OID_HEXSZ);
     OId oid;
-    qGitThrow(git_oid_fromstrn(oid.data(), string.constData(), len));
-    oid.d.resize(len / 2);
+    oid.fromHex(string);
     return oid;
 }
 
@@ -84,16 +83,16 @@ OId OId::rawDataToOid(const QByteArray& raw)
     return oid;
 }
 
-QByteArray OId::format() const
+std::string OId::format() const
 {
-    QByteArray ba(GIT_OID_HEXSZ, Qt::Uninitialized);
+    std::string ba(GIT_OID_HEXSZ, '\0');
     git_oid_fmt(ba.data(), constData());
     return ba;
 }
 
-QByteArray OId::pathFormat() const
+std::string OId::pathFormat() const
 {
-    QByteArray ba(GIT_OID_HEXSZ+1, Qt::Uninitialized);
+    std::string ba(GIT_OID_HEXSZ+1, '\0');
     git_oid_pathfmt(ba.data(), constData());
     return ba;
 }
@@ -115,7 +114,7 @@ bool operator ==(const OId &oid1, const OId &oid2)
 
 bool operator !=(const OId &oid1, const OId &oid2)
 {
-    return !(operator ==(oid1, oid2));
+    return !(oid1 == oid2);
 }
 
 int OId::length() const

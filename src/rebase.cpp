@@ -60,12 +60,12 @@ struct Rebase::Private {
 
     git_rebase *data() const
     {
-        return mRebase.data();
+        return mRebase.get();
     }
 
     const git_rebase *constData() const
     {
-        return mRebase.data();
+        return mRebase.get();
     }
 
 private:

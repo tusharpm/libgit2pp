@@ -79,7 +79,7 @@ namespace LibGit2pp
 
             const char *what() const throw();
 
-            std::string message() const throw();
+            const std::string& message() const throw();
 
             Category category() const throw();
 

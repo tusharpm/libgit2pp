@@ -20,6 +20,8 @@
 #ifndef LIBGIT2PP_LIB_FLAGS_H
 #define LIBGIT2PP_LIB_FLAGS_H
 
+#include <type_traits>
+
 namespace LibGit2pp
 {
 

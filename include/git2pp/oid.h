@@ -80,7 +80,7 @@ namespace LibGit2pp
              *
              * @throws Exception
              */
-            void fromHex(const QByteArray& hex);
+            void fromHex(const std::string& hex);
 
             /**
              * Set the value of the object parsing a string.
@@ -118,7 +118,7 @@ namespace LibGit2pp
              * @return OId; null OId on failure.
              * @throws Exception
              */
-            static OId stringToOid(const QByteArray& string);
+            static OId stringToOid(const std::string& string);
 
             /**
              * Copy an already raw oid into a git_oid structure.

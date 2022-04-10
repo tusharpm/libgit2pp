@@ -48,12 +48,12 @@ const StatusEntry StatusList::entryByIndex(size_t idx)
 
 git_status_list* StatusList::data() const
 {
-    return d.data();
+    return d.get();
 }
 
 const git_status_list* StatusList::constData() const
 {
-    return d.data();
+    return d.get();
 }
 
 }

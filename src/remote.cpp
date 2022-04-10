@@ -50,7 +50,7 @@ struct Remote::Private : public internal::RemoteListener
 
         git_push_options opts = GIT_PUSH_OPTIONS_INIT;
         opts.callbacks = m_callbacks.rawCallbacks();
-        qGitThrow(git_remote_push(m_data.data(), &refspecs.data(), &opts));
+        qGitThrow(git_remote_push(m_data.get(), &refspecs.data(), &opts));
     }
 
     std::shared_ptr<git_remote> m_data;
@@ -78,7 +78,7 @@ void Remote::push(const std::list<std::string> &refSpecs)
 
 git_remote* Remote::data() const
 {
-    return d_ptr->m_data.data();
+    return d_ptr->m_data.get();
 }
 
 }

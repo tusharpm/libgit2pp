@@ -85,7 +85,7 @@ const char *Exception::what() const throw()
     return m_msg.c_str();
 }
 
-QByteArray Exception::message() const throw()
+const std::string& Exception::message() const throw()
 {
     return m_msg;
 }

@@ -64,7 +64,7 @@ bool Reference::isSymbolic() const
 
 std::string Reference::name() const
 {
-    return std::string::fromUtf8(git_reference_name(d.data()));
+    return git_reference_name(d.data());
 }
 
 Reference Reference::resolve() const

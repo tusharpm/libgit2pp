@@ -68,7 +68,7 @@ void RevWalk::push(const Reference& reference) const
 
 void RevWalk::push(const std::string& glob) const
 {
-    qGitThrow(git_revwalk_push_glob(m_revWalk, glob.toUtf8().constData()));
+    qGitThrow(git_revwalk_push_glob(m_revWalk, glob.c_str()));
 }
 
 void RevWalk::pushHead() const
@@ -78,7 +78,7 @@ void RevWalk::pushHead() const
 
 void RevWalk::pushRange(const std::string& range) const
 {
-    qGitThrow(git_revwalk_push_range(m_revWalk,range.toUtf8().constData()));
+    qGitThrow(git_revwalk_push_range(m_revWalk, range.c_str()));
 }
 
 void RevWalk::hide(const OId& oid) const
@@ -93,12 +93,12 @@ void RevWalk::hide(const Commit& commit) const
 
 void RevWalk::hide(const Reference& reference) const
 {
-    qGitThrow(git_revwalk_hide_glob(m_revWalk, reference.name().toUtf8().data()));
+    qGitThrow(git_revwalk_hide_glob(m_revWalk, reference.name().c_str()));
 }
 
 void RevWalk::hide(const std::string& glob) const
 {
-    qGitThrow(git_revwalk_hide_glob(m_revWalk, glob.toUtf8().data()));
+    qGitThrow(git_revwalk_hide_glob(m_revWalk, glob.c_str()));
 }
 
 void RevWalk::hideHead() const

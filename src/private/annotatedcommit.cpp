@@ -18,7 +18,7 @@
 
 #include "annotatedcommit.h"
 #include "git2.h"
-#include "exception.h"
+#include "git2pp/exception.h"
 
 namespace LibGit2pp
 {
@@ -53,7 +53,7 @@ AnnotatedCommit::AnnotatedCommit(const AnnotatedCommit &other)
 
 const git_annotated_commit *AnnotatedCommit::constData() const
 {
-    return d.data();
+    return d.get();
 }
 }
 }
