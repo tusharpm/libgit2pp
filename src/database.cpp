@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "database.h"
+#include "git2pp/database.h"
 
 #include "private/pathcodec.h"
 
@@ -39,7 +39,7 @@ Database::~Database()
 {
 }
 
-int Database::open(const QString& objectsDir)
+int Database::open(const std::string& objectsDir)
 {
     return git_odb_open(&m_database, PathCodec::toLibGit2(objectsDir));
 }

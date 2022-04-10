@@ -19,11 +19,11 @@
 */
 
 #include "TestHelpers.h"
-#include "repository.h"
-#include "tree.h"
-#include "diff.h"
-#include "diffdelta.h"
-#include "difffile.h"
+#include "git2pp/repository.h"
+#include "git2pp/tree.h"
+#include "git2pp/diff.h"
+#include "git2pp/diffdelta.h"
+#include "git2pp/difffile.h"
 
 using namespace LibGit2pp;
 
@@ -46,7 +46,7 @@ void TestDiff::testDiffFileList()
         Tree newTree = repo.lookupRevision("e3f21f35e5^{tree}").toTree(); // the development history of libgit2pp
         Diff diff = repo.diffTrees(oldTree, newTree);
         size_t numD = diff.numDeltas();
-        QStringList expectedPaths = QStringList() << "CMakeLists.txt" << "src/blob.cpp";
+        std::stringList expectedPaths = std::stringList() << "CMakeLists.txt" << "src/blob.cpp";
         for (size_t i = 0; i < numD; ++i) {
             expectedPaths.removeAll(diff.delta(i).newFile().path());
         }

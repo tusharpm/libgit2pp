@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "rebaseoptions.h"
-#include "checkoutoptions.h"
+#include "git2pp/rebaseoptions.h"
+#include "git2pp/checkoutoptions.h"
 
 namespace LibGit2pp
 {

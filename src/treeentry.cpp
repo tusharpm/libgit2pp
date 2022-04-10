@@ -18,9 +18,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "treeentry.h"
-#include "repository.h"
-#include "exception.h"
+#include "git2pp/treeentry.h"
+#include "git2pp/repository.h"
+#include "git2pp/exception.h"
 
 #include "private/pathcodec.h"
 
@@ -51,7 +51,7 @@ unsigned int TreeEntry::attributes() const
     return git_tree_entry_filemode(d);
 }
 
-const QString TreeEntry::name() const
+const std::string TreeEntry::name() const
 {
     return PathCodec::fromLibGit2(git_tree_entry_name(d));
 }

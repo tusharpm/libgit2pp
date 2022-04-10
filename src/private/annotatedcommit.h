@@ -37,7 +37,7 @@ public:
 
     const git_annotated_commit *constData() const;
 private:
-    QSharedPointer<git_annotated_commit> d;
+    std::shared_ptr<git_annotated_commit> d;
 };
 }
 }

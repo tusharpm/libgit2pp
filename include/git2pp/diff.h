@@ -55,7 +55,7 @@ public:
     DiffDelta delta(size_t index) const;
 
 public:
-    QSharedPointer<git_diff> d;
+    std::shared_ptr<git_diff> d;
 };
 
 }

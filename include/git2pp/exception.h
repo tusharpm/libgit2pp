@@ -22,8 +22,8 @@
 #define LIBGIT2PP_EXCEPTION_H
 
 #include <exception>
+#include <string>
 #include "libgit2pp_config.h"
-#include <QtCore/QByteArray>
 
 namespace LibGit2pp
 {
@@ -74,17 +74,17 @@ namespace LibGit2pp
             };
 
             Exception();
-            Exception(const QString& msg, Category category = None);
+            Exception(const std::string& msg, Category category = None);
             ~Exception() throw();
 
             const char *what() const throw();
 
-            QByteArray message() const throw();
+            std::string message() const throw();
 
             Category category() const throw();
 
         private:
-            QByteArray m_msg;
+            std::string m_msg;
             Category m_category;
     };
 

@@ -48,7 +48,7 @@ private slots:
     void testIdentitySetting();
 
 private:
-    const QString branchName;
+    const std::string branchName;
     QPointer<Repository> repo;
 };
 
@@ -74,7 +74,7 @@ void TestRepository::testRemoteUrlChanging()
 {
     repo->init(testdir);
 
-    const QString remoteName("origin");
+    const std::string remoteName("origin");
     repo->remoteAdd(remoteName, HttpRemoteUrl);
     repo->remoteAdd(remoteName, GitRemoteUrl, true);
 
@@ -115,15 +115,15 @@ void TestRepository::testShouldIgnore()
     initTestRepo();
     repo->open(testdir);
 
-    const QString ignoredFileName("Makefile");
-    const QString includedFileName("notignored.txt");
+    const std::string ignoredFileName("Makefile");
+    const std::string includedFileName("notignored.txt");
 
     // Relative paths
     QVERIFY(repo->shouldIgnore(ignoredFileName));
     QVERIFY(!repo->shouldIgnore(includedFileName));
 
     QDir dir(testdir);
-    QString testDirName(dir.dirName());
+    std::string testDirName(dir.dirName());
 
     // Absolute paths
     QVERIFY(repo->shouldIgnore(dir.absoluteFilePath(ignoredFileName)));

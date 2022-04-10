@@ -50,14 +50,14 @@ public:
     /**
      * Gets the URL specified for this remote.
      */
-    QString url() const;
+    std::string url() const;
 
     /**
      * Perform a push on this Remote.
      * @param refSpecs The refspecs to use for pushing. If left empty the configured refspecs will be used.
      * @throws LibGit2pp::Exception
      */
-    void push(const QList<QString> &refSpecs = QList<QString>());
+    void push(const QList<std::string> &refSpecs = QList<std::string>());
 
     git_remote* data() const;
 
@@ -68,7 +68,7 @@ private:
     Q_DISABLE_COPY(Remote)
 
     struct Private;
-    QSharedPointer<Private> d_ptr;
+    std::shared_ptr<Private> d_ptr;
 };
 
 /** @} */

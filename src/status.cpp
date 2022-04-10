@@ -17,10 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
-#include <QtCore/QFile>
-
-#include "status.h"
+#include "git2pp/status.h"
 
 namespace LibGit2pp
 {

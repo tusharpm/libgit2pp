@@ -18,11 +18,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "tree.h"
+#include "git2pp/tree.h"
 
-#include "treeentry.h"
-#include "repository.h"
-#include "oid.h"
+#include "git2pp/treeentry.h"
+#include "git2pp/repository.h"
+#include "git2pp/oid.h"
 
 #include "private/pathcodec.h"
 
@@ -53,7 +53,7 @@ size_t Tree::entryCount()
     return git_tree_entrycount(data());
 }
 
-TreeEntry Tree::entryByName(const QString& fileName) const
+TreeEntry Tree::entryByName(const std::string& fileName) const
 {
     return TreeEntry(git_tree_entry_byname(constData(), PathCodec::toLibGit2(fileName)));
 }

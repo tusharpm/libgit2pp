@@ -39,7 +39,7 @@ public:
     /**
      * Returns the path of the file if it is known. Otherwise returns an empty string.
      */
-    QString path() const;
+    std::string path() const;
 
 private:
     const git_diff_file *m_diff_file;

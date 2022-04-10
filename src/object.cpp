@@ -18,14 +18,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "object.h"
+#include "git2pp/object.h"
 
-#include "oid.h"
-#include "repository.h"
-#include "commit.h"
-#include "tag.h"
-#include "tree.h"
-#include "blob.h"
+#include "git2pp/oid.h"
+#include "git2pp/repository.h"
+#include "git2pp/commit.h"
+#include "git2pp/tag.h"
+#include "git2pp/tree.h"
+#include "git2pp/blob.h"
 
 namespace LibGit2pp
 {
@@ -110,7 +110,7 @@ Blob Object::toBlob() const
 
 bool Object::isNull() const
 {
-    return d.isNull();
+    return !d;
 }
 
 OId Object::oid() const
@@ -138,9 +138,9 @@ bool Object::isBlob() const
     return type() == BlobType;
 }
 
-QString Object::typeString() const
+std::string Object::typeString() const
 {
-    return QString(git_object_type2string(git_object_type(d.data())));
+    return std::string(git_object_type2string(git_object_type(d.data())));
 }
 
 Repository Object::owner() const

@@ -18,9 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "databasebackend.h"
-
-#include <QtCore/QFile>
+#include "git2pp/databasebackend.h"
 
 namespace LibGit2pp
 {

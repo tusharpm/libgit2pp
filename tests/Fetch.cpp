@@ -46,7 +46,7 @@ public slots:
     { 
         m_progress = p;
         if (p % 20 == 0) {
-            qDebug() << qPrintable(QString("Progress : %1%").arg(p));
+            qDebug() << qPrintable(std::string("Progress : %1%").arg(p));
         }
     }
 
@@ -61,9 +61,9 @@ private slots:
 
 private:
     int m_progress;
-    const QString testdir;
+    const std::string testdir;
 
-    void fetch(const QString& branch, const QString dirname);
+    void fetch(const std::string& branch, const std::string dirname);
 };
 
 
@@ -71,7 +71,7 @@ void TestFetch::remoteAdd()
 {
     LibGit2pp::Repository repo;
 
-    const QString repoPath = testdir + "/fetch_test/remote_add";
+    const std::string repoPath = testdir + "/fetch_test/remote_add";
 
     QVERIFY(removeDir(repoPath));
     sleep::ms(500);
@@ -91,7 +91,7 @@ void TestFetch::remoteAddExisiting()
 {
     LibGit2pp::Repository repo;
 
-    const QString repoPath = testdir + "/fetch_test/add_exisiting";
+    const std::string repoPath = testdir + "/fetch_test/add_exisiting";
 
     QVERIFY(removeDir(repoPath));
     sleep::ms(500);
@@ -114,7 +114,7 @@ void TestFetch::remoteAddExisitingDifferentUrl()
 {
     LibGit2pp::Repository repo;
 
-    const QString repoPath = testdir + "/fetch_test/add_existing_url";
+    const std::string repoPath = testdir + "/fetch_test/add_existing_url";
 
     QVERIFY(removeDir(repoPath));
     sleep::ms(500);
@@ -138,11 +138,11 @@ void TestFetch::remoteAddExisitingDifferentUrl()
 }
 
 
-void TestFetch::fetch(const QString& branch, const QString dirname)
+void TestFetch::fetch(const std::string& branch, const std::string dirname)
 {
     LibGit2pp::Repository repo;
 
-    const QString repoPath = testdir + "/fetch_test/" + dirname;
+    const std::string repoPath = testdir + "/fetch_test/" + dirname;
 
     QVERIFY(removeDir(repoPath));
     sleep::ms(500);
@@ -178,7 +178,7 @@ void TestFetch::fetchAdditionalBranch()
 
     LibGit2pp::Repository repo;
 
-    const QString repoPath = testdir + "/fetch_test/fetch_additional";
+    const std::string repoPath = testdir + "/fetch_test/fetch_additional";
 
     try {
         repo.open(repoPath);
@@ -196,12 +196,12 @@ void TestFetch::remoteBranches()
 {
     LibGit2pp::Repository repo;
 
-    const QString repoPath = testdir + "/fetch_test/remote_branches";
+    const std::string repoPath = testdir + "/fetch_test/remote_branches";
 
     QVERIFY(removeDir(repoPath));
     sleep::ms(500);
 
-    QStringList heads;
+    std::stringList heads;
     try {
         repo.init(repoPath);
         repo.remoteAdd("kde", HttpRemoteUrl);

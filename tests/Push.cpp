@@ -43,9 +43,9 @@ private slots:
     void pushToNewTargetBranch();
 
 private:
-    const QString testdir;
-    const QString existingRepo;
-    const QString existingBareRepo;
+    const std::string testdir;
+    const std::string existingRepo;
+    const std::string existingBareRepo;
 
     void initBareLocalRepo();
 };
@@ -72,16 +72,16 @@ void TestPush::initBareLocalRepo()
 
 void TestPush::pushToNewTargetBranch()
 {
-    const QString repoPath = testdir + "push_new_target_branch";
+    const std::string repoPath = testdir + "push_new_target_branch";
     QVERIFY(removeDir(repoPath));
 
-    const QString targetBranch("push_new_target_branch");
+    const std::string targetBranch("push_new_target_branch");
 
     Repository repo;
     try {
         repo.clone(existingBareRepo, repoPath);
         QScopedPointer<Remote> remote(repo.remote("origin"));
-        remote->push(QStringList("refs/heads/master:refs/heads/" + targetBranch));
+        remote->push(std::stringList("refs/heads/master:refs/heads/" + targetBranch));
     }
     catch (const LibGit2pp::Exception& ex) {
         QFAIL(ex.what());

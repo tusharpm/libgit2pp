@@ -20,14 +20,14 @@
 #define LIBGIT2PP_PATHCODEC_H
 
 #include <QByteArray>
-#include <QString>
+#include <string>
 
 class PathCodec
 {
 public:
-    static QByteArray toLibGit2(const QString &path);
-    static QString fromLibGit2(const QByteArray &path);
-    static QString fromLibGit2(const char *path);
+    static QByteArray toLibGit2(const std::string &path);
+    static std::string fromLibGit2(const QByteArray &path);
+    static std::string fromLibGit2(const char *path);
 };
 
 #endif // LIBGIT2PP_PATHCODEC_H

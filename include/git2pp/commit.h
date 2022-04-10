@@ -25,7 +25,7 @@
 #include "tree.h"
 #include "signature.h"
 
-#include <QtCore/QDateTime>
+#include <chrono>
 
 namespace LibGit2pp
 {
@@ -70,7 +70,7 @@ namespace LibGit2pp
             /**
              * Get the full message of a commit.
              */
-            QString message() const;
+            std::string message() const;
 
             /**
              * Get the short commit message.
@@ -84,7 +84,7 @@ namespace LibGit2pp
              *
              * @return the short message
              */
-            QString shortMessage(int maxLen = 80) const;
+            std::string shortMessage(int maxLen = 80) const;
 
             /**
              * Get the commit time (i.e. committer time) of this commit.
@@ -163,7 +163,7 @@ namespace LibGit2pp
              *
              * @see Repository::createCommit
              */
-            OId amend(const Tree& tree = Tree(), const QString& ref = QString(), const QString& message = QString(), const Signature& author = Signature(), const Signature& committer = Signature());
+            OId amend(const Tree& tree = Tree(), const std::string& ref = std::string(), const std::string& message = std::string(), const Signature& author = Signature(), const Signature& committer = Signature());
 
             git_commit* data() const;
             const git_commit* constData() const;

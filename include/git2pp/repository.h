@@ -21,10 +21,10 @@
 #ifndef LIBGIT2PP_REPOSITORY_H
 #define LIBGIT2PP_REPOSITORY_H
 
+#include <list>
+#include <map>
 #include <memory>
-#include <QtCore/QStringList>
-#include <QtCore/QObject>
-#include <QtCore/QMap>
+#include <string>
 
 #include "libgit2pp_config.h"
 
@@ -62,10 +62,8 @@ namespace LibGit2pp
      * @ingroup LibGit2pp
      * @{
      */
-    class LIBGIT2PP_EXPORT Repository : public QObject
+    class LIBGIT2PP_EXPORT Repository
     {
-            Q_OBJECT
-
         public:
 
             /**
@@ -116,9 +114,9 @@ namespace LibGit2pp
              * @return The path of the found repository
              * @throws LibGit2pp::Exception
              */
-            static QString discover(const QString& startPath,
+            static std::string discover(const std::string& startPath,
                                     bool acrossFs = false,
-                                    const QStringList& ceilingDirs = QStringList());
+                                    const std::list<std::string>& ceilingDirs = {});
 
             /**
              * Constructs a new Git repository in the given folder.
@@ -130,7 +128,7 @@ namespace LibGit2pp
              *
              * @throws LibGit2pp::Exception
              */
-            void init(const QString& path, bool isBare = false);
+            void init(const std::string& path, bool isBare = false);
 
             /**
              * Open a git repository.
@@ -154,7 +152,7 @@ namespace LibGit2pp
              * @param path the path to the repository
              * @throws LibGit2pp::Exception
              */
-            void open(const QString& path);
+            void open(const std::string& path);
 
             /**
              * Convenience function for finding and opening a git repository.
@@ -163,9 +161,9 @@ namespace LibGit2pp
              *
              * @throws LibGit2pp::Exception
              */
-            void discoverAndOpen(const QString &startPath,
+            void discoverAndOpen(const std::string &startPath,
                                  bool acrossFs = false,
-                                 const QStringList &ceilingDirs = QStringList());
+                                 const std::list<std::string> &ceilingDirs = {});
 
             /**
              * Retrieve and resolve the reference pointed at by HEAD.
@@ -215,17 +213,17 @@ namespace LibGit2pp
              * The name equals the repositories working directory name.
              * In case of a bare repository, the name equals the repositorie's directory.
              */
-            QString name() const;
+            std::string name() const;
 
             /**
              * Get the path to the repository
              */
-            QString path() const;
+            std::string path() const;
 
             /**
              * Get the path to the working directory
              */
-            QString workDirPath() const;
+            std::string workDirPath() const;
 
             /**
              * The repositories configuration file. Includes the global git configuration file.
@@ -238,7 +236,7 @@ namespace LibGit2pp
              * @throws LibGit2pp::Exception
              * @return The reference with the given name
              */
-            Reference lookupRef(const QString& name) const;
+            Reference lookupRef(const std::string& name) const;
 
             /**
              * Lookup a reference by its name in a repository and returns the oid of its target.
@@ -246,7 +244,7 @@ namespace LibGit2pp
              * @throws LibGit2pp::Exception
              * @return The OId of the target
              */
-            OId lookupRefOId(const QString& name) const;
+            OId lookupRefOId(const std::string& name) const;
 
             /**
              * Lookup a reference by its shorthand name in a repository.
@@ -254,7 +252,7 @@ namespace LibGit2pp
              * @throws LibGit2pp::Exception
              * @return The reference with the given name
              */
-            Reference lookupShorthandRef(const QString& shorthand) const;
+            Reference lookupShorthandRef(const std::string& shorthand) const;
 
             /**
              * Lookup a commit object from a repository.
@@ -301,7 +299,7 @@ namespace LibGit2pp
              * @throws LibGit2pp::Exception
              * @return The found object if any.
              */
-            Object lookupRevision(const QString &revspec) const;
+            Object lookupRevision(const std::string &revspec) const;
 
             /**
              * Create a new object id reference.
@@ -315,7 +313,7 @@ namespace LibGit2pp
              * @param message The one line long message to be appended to the reflog
              * @throws LibGit2pp::Exception
              */
-            Reference createRef(const QString& name, const OId& oid, bool overwrite = true, const QString &message = QString());
+            Reference createRef(const std::string& name, const OId& oid, bool overwrite = true, const std::string &message = std::string());
 
             /**
              * Create a new symbolic reference.
@@ -329,7 +327,7 @@ namespace LibGit2pp
              * @param message The one line long message to be appended to the reflog
              * @throws LibGit2pp::Exception
              */
-            Reference createSymbolicRef(const QString& name, const QString& target, bool overwrite = true, const QString &message = QString());
+            Reference createSymbolicRef(const std::string& name, const std::string& target, bool overwrite = true, const std::string &message = std::string());
 
             /**
              * Create a new commit in the repository.
@@ -348,7 +346,7 @@ namespace LibGit2pp
              * @return The OId of the newly created commit.
              * @throws LibGit2pp::Exception
              */
-            OId createCommit(const Tree& tree, const QList<Commit>& parents, const Signature& author, const Signature& committer, const QString& message, const QString& ref = QString());
+            OId createCommit(const Tree& tree, const std::list<Commit>& parents, const Signature& author, const Signature& committer, const std::string& message, const std::string& ref = std::string());
 
             /**
              * Create a new lightweight tag pointing at a target object
@@ -359,7 +357,7 @@ namespace LibGit2pp
              *
              * @throws LibGit2pp::Exception
              */
-            OId createTag(const QString& name,
+            OId createTag(const std::string& name,
                               const Object& target,
                               bool overwrite = true);
 
@@ -372,18 +370,18 @@ namespace LibGit2pp
              *
              * @throws LibGit2pp::Exception
              */
-            OId createTag(const QString& name,
-                              const Object& target,
-                              const Signature& tagger,
-                              const QString& message,
-                              bool overwrite = true);
+            OId createTag(const std::string& name,
+                            const Object& target,
+                            const Signature& tagger,
+                            const std::string& message,
+                            bool overwrite = true);
 
             /**
              * Delete an existing tag reference.
              *
              * @throws LibGit2pp::Exception
              */
-            void deleteTag(const QString& name);
+            void deleteTag(const std::string& name);
 
             /**
              * Read a file from the working folder of a repository
@@ -391,7 +389,7 @@ namespace LibGit2pp
              *
              * @throws LibGit2pp::Exception
              */
-            OId createBlobFromFile(const QString& path);
+            OId createBlobFromFile(const std::string& path);
 
             /**
              * Write an in-memory buffer to the ODB as a blob
@@ -408,14 +406,14 @@ namespace LibGit2pp
              * @return A reference to the newly created branch
              * @throws LibGit2pp::Exception
              */
-            Reference createBranch(const QString &branchName, const Commit &target = Commit(), bool force = false);
+            Reference createBranch(const std::string &branchName, const Commit &target = Commit(), bool force = false);
 
             /**
              * Deletes a local branch.
              * @param branchName The name of the branch.
              * @throws LibGit2pp::Exception
              */
-            void deleteBranch(const QString &branchName);
+            void deleteBranch(const std::string &branchName);
 
             /**
              * Cherry-picks a commit.
@@ -435,7 +433,7 @@ namespace LibGit2pp
              * @param pattern Standard fnmatch pattern
              * @throws LibGit2pp::Exception
              */
-            QStringList listTags(const QString& pattern = QString()) const;
+            std::list<std::string> listTags(const std::string& pattern = {}) const;
 
             /**
              * Create a list with all references in the Repository.
@@ -443,14 +441,14 @@ namespace LibGit2pp
              * @param pattern Standard fnmatch pattern
              * @throws LibGit2pp::Exception
              */
-            QStringList listReferences() const;
+            std::list<std::string> listReferences() const;
 
             /**
              * @brief Get the object database behind a Git repository
              *
              * @return a pointer to the object db
              */
-            LibGit2pp::Database database() const;
+            Database database() const;
 
             /**
              * @brief Get the Index file of a Git repository
@@ -547,7 +545,7 @@ namespace LibGit2pp
              * @param remoteName the name of the remote
              * @param credentials the \c Credentials to be used for the remote
              */
-            void setRemoteCredentials(const QString& remoteName, Credentials credentials);
+            void setRemoteCredentials(const std::string& remoteName, Credentials credentials);
 
             /**
             * Clone a git repository.
@@ -558,7 +556,7 @@ namespace LibGit2pp
             * @param path non-existing directory for the new clone
             * @throws LibGit2pp::Exception
             */
-            void clone(const QString& url, const QString& path);
+            void clone(const std::string& url, const std::string& path);
 
             /**
             * Add remote repository.
@@ -569,7 +567,7 @@ namespace LibGit2pp
             * if true changes the remote's URL, if false throws an exception.
             * @throws LibGit2pp::Exception
             */
-            void remoteAdd(const QString& name, const QString& url, bool changeUrlIfExists = false);
+            void remoteAdd(const std::string& name, const std::string& url, bool changeUrlIfExists = false);
 
             /**
              * Gets a named remote from this repository. The caller is responsible for
@@ -578,7 +576,7 @@ namespace LibGit2pp
              * @param parent the parent for the object that is returned
              * @throws LibGit2pp::Exception
              */
-            Remote* remote(const QString &remoteName, QObject *parent = 0) const;
+            Remote* remote(const std::string &remoteName, QObject *parent = 0) const;
 
             /**
             * Fetch from known remote repository.
@@ -591,9 +589,9 @@ namespace LibGit2pp
             *        is the name of the remote (or its url, for in-memory remotes).
             * @throws LibGit2pp::Exception
             */
-            void fetch(const QString& remote, const QString& head = QString(), const QString &message = QString());
+            void fetch(const std::string& remote, const std::string& head = std::string(), const std::string &message = std::string());
 
-            QStringList remoteBranches(const QString& remoteName);
+            std::list<std::string> remoteBranches(const std::string& remoteName);
 
 
             /**
@@ -620,7 +618,7 @@ namespace LibGit2pp
             * @param remote  remote which should be used, default is 'origin'
             * @throws LibGit2pp::Exception
             */
-            void checkoutRemote(const QString& branch, const CheckoutOptions &opts = CheckoutOptions(), const QString& remote = "origin");
+            void checkoutRemote(const std::string& branch, const CheckoutOptions &opts = CheckoutOptions(), const std::string& remote = "origin");
 
             /**
              * Types of reset operation.
@@ -665,11 +663,11 @@ namespace LibGit2pp
              *
              * @throws LibGit2pp::Exception
              */
-            bool shouldIgnore(const QString &path) const;
+            bool shouldIgnore(const std::string &path) const;
 
             struct Identity {
-                QString name;
-                QString email;
+                std::string name;
+                std::string email;
             };
 
             /**
@@ -702,7 +700,7 @@ namespace LibGit2pp
 
         private:
             class Private;
-            QSharedPointer<Private> d_ptr;
+            std::shared_ptr<Private> d_ptr;
             Q_DECLARE_PRIVATE()
     };
 

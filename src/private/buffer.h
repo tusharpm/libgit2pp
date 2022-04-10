@@ -21,7 +21,7 @@
 
 #include "git2.h"
 
-#include <QString>
+#include <string>
 
 namespace LibGit2pp {
 namespace internal {
@@ -32,7 +32,7 @@ public:
     Buffer();
     ~Buffer();
 
-    QString asPath() const;
+    std::string asPath() const;
 
     git_buf* data();
 

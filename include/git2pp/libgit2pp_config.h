@@ -20,24 +20,17 @@
 #ifndef LIBGIT2PP_LIB_CONFIG_H
 #define LIBGIT2PP_LIB_CONFIG_H
 
-#include <QtCore/QtGlobal>
-
 /** @defgroup LibGit2pp The Qt Library for Git revision control featuring libgit2
  * Qt wrapper classes for the LibGit2 library.
  */
 
 #ifndef LIBGIT2PP_EXPORT
 #if defined(MAKE_LIBGIT2PP_LIB)
-#define LIBGIT2PP_EXPORT Q_DECL_EXPORT
+#define LIBGIT2PP_EXPORT /* Q_DECL_EXPORT */
 #else
-#define LIBGIT2PP_EXPORT Q_DECL_IMPORT
+#define LIBGIT2PP_EXPORT /* Q_DECL_IMPORT */
 #endif
 #endif
-
-#ifndef LIBGIT2PP_EXPORT_DEPRECATED
-#define LIBGIT2PP_EXPORT_DEPRECATED Q_DECL_DEPRECATED LIBGIT2PP_EXPORT
-#endif
-
 
 #ifndef LIBGIT2PP_FUNC_NAME
 #define LIBGIT2PP_FUNC_NAME __func__

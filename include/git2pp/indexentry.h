@@ -62,7 +62,7 @@ namespace LibGit2pp
             /**
              * Get the path of the index entry, represented by a string
              */
-            QString path() const;
+            std::string path() const;
 
             /**
              * Get the size of the file

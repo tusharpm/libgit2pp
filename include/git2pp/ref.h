@@ -22,7 +22,7 @@
 #define LIBGIT2PP_REF_H
 
 #include <memory>
-#include <QtCore/QString>
+#include <string>
 
 #include "git2.h"
 
@@ -77,7 +77,7 @@ namespace LibGit2pp
              *
              * @return a pointer to the name if available, NULL otherwise
              */
-            QString symbolicTarget() const;
+            std::string symbolicTarget() const;
 
             /**
              * Return true if the reference is direct (i.e. a reference to an OID)
@@ -94,7 +94,7 @@ namespace LibGit2pp
              *
              * @return the full name for the ref
              */
-            QString name() const;
+            std::string name() const;
 
             /**
              * Resolve a symbolic reference
@@ -127,7 +127,7 @@ namespace LibGit2pp
              *
              * @param name The new name for the reference
              */
-            void setName(const QString& name);
+            void setName(const std::string& name);
 
             /**
              * Set the target reference of a reference.
@@ -143,7 +143,7 @@ namespace LibGit2pp
              * @param message The one line long message to be appended to the reflog
              * @throws LibGit2pp::Exception
              */
-            void setSymbolicTarget(const QString& target, const QString &message = QString());
+            void setSymbolicTarget(const std::string& target, const std::string &message = std::string());
 
             /**
              * Set the OID target of a reference.
@@ -159,7 +159,7 @@ namespace LibGit2pp
              * @param message The one line long message to be appended to the reflog
              * @throws LibGit2pp::Exception
              */
-            void setTarget(const OId& oid, const QString &message = QString());
+            void setTarget(const OId& oid, const std::string &message = std::string());
 
             bool isNull() const;
 
@@ -167,7 +167,7 @@ namespace LibGit2pp
             const git_reference* constData() const;
 
         private:
-            typedef QSharedPointer<git_reference> ptr_type;
+            typedef std::shared_ptr<git_reference> ptr_type;
             ptr_type d;
     };
 

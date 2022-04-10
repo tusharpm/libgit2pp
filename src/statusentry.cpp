@@ -17,13 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "git2pp/statusentry.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 
-#include "statusentry.h"
-#include "status.h"
-#include "diffdelta.h"
+#include "git2pp/status.h"
+#include "git2pp/diffdelta.h"
 
 using namespace LibGit2pp;
 

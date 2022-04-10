@@ -45,7 +45,7 @@ public:
     const git_rebase_options *constData() const;
 private:
     struct Private;
-    QSharedPointer<Private> d_ptr;
+    std::shared_ptr<Private> d_ptr;
 };
 /** @} */
 }

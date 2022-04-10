@@ -21,9 +21,9 @@
 #ifndef LIBGIT2PP_OBJECT_H
 #define LIBGIT2PP_OBJECT_H
 
-#include <QtCore/QString>
-#include <QtCore/QDateTime>
+#include <chrono>
 #include <memory>
+#include <string>
 
 #include "libgit2pp_config.h"
 
@@ -167,7 +167,7 @@ namespace LibGit2pp
             /**
              * Get the object type as a string.
              */
-            QString typeString() const;
+            std::string typeString() const;
 
             /**
              * Get the repository that owns this object.
@@ -178,7 +178,7 @@ namespace LibGit2pp
             const git_object* constData() const;
 
         private:
-            QSharedPointer<git_object> d;
+            std::shared_ptr<git_object> d;
 
             static Type resolveType(git_otype);
 

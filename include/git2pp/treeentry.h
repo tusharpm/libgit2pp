@@ -61,7 +61,7 @@ namespace LibGit2pp
              * Get the filename of a tree entry
              * @return the name of the file
              */
-            const QString name() const;
+            const std::string name() const;
 
             /**
              * Get the id of the object pointed by the entry

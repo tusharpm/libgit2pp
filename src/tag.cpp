@@ -18,10 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "tag.h"
-#include "oid.h"
-#include "signature.h"
-#include "exception.h"
+#include "git2pp/tag.h"
+#include "git2pp/oid.h"
+#include "git2pp/signature.h"
+#include "git2pp/exception.h"
 
 namespace LibGit2pp
 {
@@ -52,7 +52,7 @@ Object Tag::target() const
     return Object(obj);
 }
 
-const QString Tag::name() const
+const std::string Tag::name() const
 {
     return git_tag_name(data());
 }
@@ -62,7 +62,7 @@ Signature Tag::tagger() const
     return Signature(git_tag_tagger(data()));
 }
 
-const QString Tag::message()
+const std::string Tag::message()
 {
     return git_tag_message(data());
 }

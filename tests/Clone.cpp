@@ -27,11 +27,9 @@
 #include <iostream>
 #include <bitset>
 
-#include "commit.h"
-#include "repository.h"
-#include "credentials.h"
-
-#include "TestHelpers.h"
+#include "git2pp/commit.h"
+#include "git2pp/repository.h"
+#include "git2pp/credentials.h"
 
 using namespace LibGit2pp;
 
@@ -48,7 +46,7 @@ public slots:
     { 
         m_clone_progress = p;
         if (p % 20 == 0) {
-            qDebug() << qPrintable(QString("Progress : %1%").arg(p));
+            qDebug() << qPrintable(std::string("Progress : %1%").arg(p));
         }
     }
 
@@ -60,9 +58,9 @@ private slots:
 
 private:
     int m_clone_progress;
-    const QString testdir;
+    const std::string testdir;
 
-    void clone(const QString& url, const Credentials &credentials = Credentials());
+    void clone(const std::string& url, const Credentials &credentials = Credentials());
 };
 
 
@@ -71,19 +69,19 @@ TestClone::TestClone() : testdir(VALUE_TO_STR(TEST_DIR))
 {
 }
 
-void TestClone::clone(const QString& url, const Credentials &credentials)
+void TestClone::clone(const std::string& url, const Credentials &credentials)
 {
     Repository repo;
     repo.setRemoteCredentials("origin", credentials);
     connect(&repo, SIGNAL(cloneProgress(int)), this, SLOT(cloneProgress(int)));
 
-    QString dirname = url;
+    std::string dirname = url;
     dirname.replace(":", "");
     dirname.replace("//", "/");
     dirname.replace("//", "/");
     dirname.replace("/", "_");
     dirname.replace(".", "_");
-    const QString repoPath = testdir + "/clone_test/" + dirname;
+    const std::string repoPath = testdir + "/clone_test/" + dirname;
 
     removeDir(repoPath);
     sleep::ms(500);

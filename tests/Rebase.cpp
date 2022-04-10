@@ -48,11 +48,11 @@ private slots:
     void TestRebasingMasterOntoAnotherBranchProducesCorrectTopology();
 
 private:
-    QSharedPointer<Repository> repo;
+    std::shared_ptr<Repository> repo;
     Signature sig;
 
-    OId commitIndexToRef(const QString &refSpec);
-    void writeToIndex(const QString &path, const QString &text);
+    OId commitIndexToRef(const std::string &refSpec);
+    void writeToIndex(const std::string &path, const std::string &text);
 };
 
 TestRebase::TestRebase()
@@ -65,7 +65,7 @@ void TestRebase::init()
 {
     TestBase::init();
     initTestRepo();
-    repo = QSharedPointer<Repository>(new Repository);
+    repo = std::shared_ptr<Repository>(new Repository);
     repo->open(testdir + "/.git");
 }
 
@@ -75,7 +75,7 @@ void TestRebase::cleanup()
     TestBase::cleanup();
 }
 
-OId TestRebase::commitIndexToRef(const QString &refSpec)
+OId TestRebase::commitIndexToRef(const std::string &refSpec)
 {
     Tree index = repo->lookupTree(repo->index().createTree());
     QList<Commit> parents;
@@ -83,7 +83,7 @@ OId TestRebase::commitIndexToRef(const QString &refSpec)
     return repo->createCommit(index, parents, sig, sig, "commit", refSpec);
 }
 
-void TestRebase::writeToIndex(const QString &path, const QString &text)
+void TestRebase::writeToIndex(const std::string &path, const std::string &text)
 {
     QFile file(path);
     file.open(QFile::ReadWrite);
@@ -96,15 +96,15 @@ void TestRebase::writeToIndex(const QString &path, const QString &text)
 void TestRebase::TestRebasingMasterOntoAnotherBranchProducesCorrectTopology()
 {
     // set up the repository
-    QString refSpecOntoBranch("refs/heads/onto");
+    std::string refSpecOntoBranch("refs/heads/onto");
     repo->createBranch("onto");
-    QString pathOntoBranchFile(testdir + "/onto.txt");
+    std::string pathOntoBranchFile(testdir + "/onto.txt");
     writeToIndex(pathOntoBranchFile, "testing");
     OId oidOntoCommit = commitIndexToRef(refSpecOntoBranch);
 
     repo->checkoutHead(CheckoutOptions(CheckoutOptions::Force));
 
-    QString pathMasterBranchFile(testdir + "/master.txt");
+    std::string pathMasterBranchFile(testdir + "/master.txt");
     writeToIndex(pathMasterBranchFile, "testing testing");
     commitIndexToRef("HEAD");
 
@@ -114,7 +114,7 @@ void TestRebase::TestRebasingMasterOntoAnotherBranchProducesCorrectTopology()
     Reference refUpstream = repo->lookupRef("refs/remotes/origin/master");
     Rebase rebase = repo->rebase(refMaster, refUpstream, refOnto, RebaseOptions(CheckoutOptions(CheckoutOptions::Safe, CheckoutOptions::RecreateMissing)));
     rebase.next();
-    OId oidRebasedMaster = rebase.commit(sig, sig, QString());
+    OId oidRebasedMaster = rebase.commit(sig, sig, std::string());
     rebase.finish(sig);
 
     // check results

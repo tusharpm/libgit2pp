@@ -12,11 +12,11 @@
 #define VALUE_TO_STR(s) TO_STR(s)
 #define VALUE_TO_QSTR(s) QLatin1String(TO_STR(s))
 
-const QString HttpRemoteUrl("http://anongit.kde.org/libgit2pp");
-const QString HttpsRemoteUrl("https://github.com/libgit2pp/libgit2pp.git");
-const QString GitRemoteUrl("git://anongit.kde.org/libgit2pp");
-const QString ExistingRepository(VALUE_TO_QSTR(TEST_EXISTING_REPOSITORY));
-const QString FileRepositoryUrl("file://" + ExistingRepository + "/.git");
+const std::string HttpRemoteUrl("http://anongit.kde.org/libgit2pp");
+const std::string HttpsRemoteUrl("https://github.com/libgit2pp/libgit2pp.git");
+const std::string GitRemoteUrl("git://anongit.kde.org/libgit2pp");
+const std::string ExistingRepository(VALUE_TO_QSTR(TEST_EXISTING_REPOSITORY));
+const std::string FileRepositoryUrl("file://" + ExistingRepository + "/.git");
 
 
 struct sleep : QThread
@@ -25,9 +25,9 @@ struct sleep : QThread
 };
 
 
-bool removeDir(const QString & dirName);
+bool removeDir(const std::string & dirName);
 
-bool copyDir(QString srcPath, QString destPath);
+bool copyDir(std::string srcPath, std::string destPath);
 
 bool libgit2HasSSH();
 
@@ -44,7 +44,7 @@ protected slots:
 protected:
     void initTestRepo();
 
-    QString testdir;
+    std::string testdir;
 };
 
 #define EXPECT_THROW(statement, exClass) \

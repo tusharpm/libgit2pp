@@ -74,7 +74,7 @@ namespace LibGit2pp
              * Get the name of a tag
              * @return name of the tag
              */
-            const QString name() const;
+            const std::string name() const;
 
             /**
              * Get the tagger (author) of a tag
@@ -86,7 +86,7 @@ namespace LibGit2pp
              * Get the message of a tag
              * @return message of the tag
              */
-            const QString message();
+            const std::string message();
 
             git_tag* data() const;
             const git_tag* constData() const;

@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "indexentry.h"
-#include "oid.h"
+#include "git2pp/indexentry.h"
+#include "git2pp/oid.h"
 
 #include "private/pathcodec.h"
 
@@ -45,7 +45,7 @@ OId IndexEntry::id() const
     return OId(&d->id);
 }
 
-QString IndexEntry::path() const
+std::string IndexEntry::path() const
 {
     return PathCodec::fromLibGit2(d->path);
 }

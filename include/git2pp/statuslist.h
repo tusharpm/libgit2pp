@@ -61,7 +61,7 @@ public:
     const git_status_list* constData() const;
 
 private:
-    typedef QSharedPointer<git_status_list> ptr_type;
+    typedef std::shared_ptr<git_status_list> ptr_type;
     ptr_type d;
 
 };

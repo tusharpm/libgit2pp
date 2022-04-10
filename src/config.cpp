@@ -18,10 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "config.h"
+#include "git2pp/config.h"
 
-#include "exception.h"
-#include "repository.h"
+#include "git2pp/exception.h"
+#include "git2pp/repository.h"
 #include "private/buffer.h"
 #include "private/pathcodec.h"
 
@@ -56,7 +56,7 @@ Config Config::fromGlobalConfig()
     return Config();
 }
 
-QString Config::findGlobal()
+std::string Config::findGlobal()
 {
     internal::Buffer buffer;
     qGitThrow(git_config_find_global(buffer.data()));
@@ -64,7 +64,7 @@ QString Config::findGlobal()
     return buffer.asPath();
 }
 
-QString Config::findSystem()
+std::string Config::findSystem()
 {
     internal::Buffer buffer;
     qGitThrow(git_config_find_system(buffer.data()));
@@ -72,23 +72,23 @@ QString Config::findSystem()
     return buffer.asPath();
 }
 
-bool Config::append(const QString &path, git_config_level_t level, const Repository &repo, bool force)
+bool Config::append(const std::string &path, git_config_level_t level, const Repository &repo, bool force)
 {
     return GIT_OK == git_config_add_file_ondisk(d, PathCodec::toLibGit2(path).constData(), level, repo.constData(), force);
 }
 
-QVariant Config::value(const QString &key, const QVariant &defaultValue) const
+std::optional<std::string> Config::value(const std::string &key) const
 {
     const char * result = 0;
-    if (git_config_get_string(&result, d, key.toUtf8().constData()) == GIT_OK)
-        return QString::fromUtf8(result);
+    if (git_config_get_string(&result, d, key.c_str()) == GIT_OK)
+        return std::string(result);
 
-    return defaultValue;
+    return {};
 }
 
-void Config::setValue(const QString &key, const QVariant &value)
+void Config::setValue(const std::string &key, const std::string &value)
 {
-    qGitThrow( git_config_set_string(d, key.toUtf8(), value.toString().toUtf8().constData()) );
+    qGitThrow( git_config_set_string(d, key.c_str(), value.c_str()) );
 }
 
 

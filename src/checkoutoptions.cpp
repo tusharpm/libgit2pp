@@ -74,17 +74,17 @@ public:
         }
     }
 
-    void setTargetDirectory(const QString &dir)
+    void setTargetDirectory(const std::string &dir)
     {
         m_target_directory = PathCodec::toLibGit2(dir);
         native.target_directory = m_target_directory.constData();
     }
 
-    void setPaths(const QList<QString> &paths)
+    void setPaths(const QList<std::string> &paths)
     {
         QList<QByteArray> pathByteArrays;
         pathByteArrays.reserve(paths.size());
-        foreach (const QString &path, paths) {
+        foreach (const std::string &path, paths) {
             pathByteArrays.append(PathCodec::toLibGit2(path));
         }
         m_paths = internal::StrArray(pathByteArrays);
@@ -108,12 +108,12 @@ const git_checkout_options* CheckoutOptions::data() const
     return &d_ptr->native;
 }
 
-void CheckoutOptions::setTargetDirectory(const QString &dir)
+void CheckoutOptions::setTargetDirectory(const std::string &dir)
 {
     d_ptr->setTargetDirectory(dir);
 }
 
-void CheckoutOptions::setPaths(const QList<QString> &paths)
+void CheckoutOptions::setPaths(const QList<std::string> &paths)
 {
     d_ptr->setPaths(paths);
 }

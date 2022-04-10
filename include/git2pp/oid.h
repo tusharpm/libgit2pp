@@ -21,8 +21,8 @@
 #ifndef LIBGIT2PP_OID_H
 #define LIBGIT2PP_OID_H
 
-#include <QtCore/QString>
-#include <QtCore/QDateTime>
+#include <string>
+#include <chrono>
 
 #include "git2.h"
 
@@ -94,7 +94,7 @@ namespace LibGit2pp
              *
              * @throws Exception
              */
-            void fromString(const QString& string);
+            void fromString(const std::string& string);
 
             /**
              * Set the value of the object from a raw oid.

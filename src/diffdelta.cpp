@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "diffdelta.h"
-#include "difffile.h"
+#include "git2pp/diffdelta.h"
+#include "git2pp/difffile.h"
 
 namespace LibGit2pp {
 

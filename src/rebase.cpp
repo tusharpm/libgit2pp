@@ -16,9 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "rebase.h"
-#include "oid.h"
-#include "exception.h"
+#include "git2pp/rebase.h"
+#include "git2pp/oid.h"
+#include "git2pp/exception.h"
 
 namespace LibGit2pp
 {
@@ -34,10 +34,10 @@ struct Rebase::Private {
         qGitThrow(git_rebase_abort(data()));
     }
 
-    OId commit(const Signature &committer, const Signature &author, const QString &message)
+    OId commit(const Signature &committer, const Signature &author, const std::string &message)
     {
         git_oid oid;
-        qGitThrow(git_rebase_commit(&oid, data(), author.data(), committer.data(), NULL, message.isNull() ? NULL : message.toUtf8().constData()));
+        qGitThrow(git_rebase_commit(&oid, data(), author.data(), committer.data(), NULL, message.empty() ? NULL : message.c_str()));
         return OId(&oid);
     }
 
@@ -69,7 +69,7 @@ struct Rebase::Private {
     }
 
 private:
-    QSharedPointer<git_rebase> mRebase;
+    std::shared_ptr<git_rebase> mRebase;
 };
 
 Rebase::Rebase(git_rebase *rebase)
@@ -82,7 +82,7 @@ void Rebase::abort()
     return d_ptr->abort();
 }
 
-OId Rebase::commit(const Signature &committer, const Signature &author, const QString &message)
+OId Rebase::commit(const Signature &committer, const Signature &author, const std::string &message)
 {
     return d_ptr->commit(committer, author, message);
 }

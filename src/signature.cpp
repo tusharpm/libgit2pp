@@ -32,21 +32,21 @@ public:
     {
     }
 
-    QSharedPointer<git_signature> signature;
+    std::shared_ptr<git_signature> signature;
 };
 
-Signature::Signature(const QString& name, const QString& email, QDateTime dateTime)
+Signature::Signature(const std::string& name, const std::string& email, QDateTime dateTime)
 {
     git_signature *sig = 0;
     qGitThrow(git_signature_new(&sig, name.toUtf8(), email.toUtf8(), dateTime.toTime_t(), dateTime.utcOffset() / 60));
-    d_ptr = QSharedPointer<Private>(new Private(sig, true));
+    d_ptr = std::shared_ptr<Private>(new Private(sig, true));
 }
 
-Signature::Signature(const QString& name, const QString& email)
+Signature::Signature(const std::string& name, const std::string& email)
 {
     git_signature *sig = 0;
     qGitThrow(git_signature_now(&sig, name.toUtf8(), email.toUtf8()));
-    d_ptr = QSharedPointer<Private>(new Private(sig, true));
+    d_ptr = std::shared_ptr<Private>(new Private(sig, true));
 }
 
 Signature::Signature(const git_signature *signature) :
@@ -54,20 +54,20 @@ Signature::Signature(const git_signature *signature) :
 {
 }
 
-QString Signature::name() const
+std::string Signature::name() const
 {
-    QString ret;
+    std::string ret;
     if (d_ptr->signature) {
-        ret = QString::fromUtf8(d_ptr->signature->name);
+        ret = std::string::fromUtf8(d_ptr->signature->name);
     }
     return ret;
 }
 
-QString Signature::email() const
+std::string Signature::email() const
 {
-    QString ret;
+    std::string ret;
     if (d_ptr->signature) {
-        ret = QString::fromUtf8(d_ptr->signature->email);
+        ret = std::string::fromUtf8(d_ptr->signature->email);
     }
     return ret;
 }

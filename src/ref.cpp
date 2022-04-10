@@ -18,11 +18,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "ref.h"
+#include "git2pp/ref.h"
 
-#include "oid.h"
-#include "repository.h"
-#include "exception.h"
+#include "git2pp/oid.h"
+#include "git2pp/repository.h"
+#include "git2pp/exception.h"
 #include "private/pathcodec.h"
 
 namespace LibGit2pp
@@ -47,9 +47,9 @@ OId Reference::target() const
     return OId(git_reference_target(d.data()));
 }
 
-QString Reference::symbolicTarget() const
+std::string Reference::symbolicTarget() const
 {
-    return QString::fromUtf8(git_reference_symbolic_target(d.data()));
+    return std::string::fromUtf8(git_reference_symbolic_target(d.data()));
 }
 
 bool Reference::isDirect() const
@@ -62,9 +62,9 @@ bool Reference::isSymbolic() const
     return git_reference_type(d.data()) == GIT_REF_SYMBOLIC;
 }
 
-QString Reference::name() const
+std::string Reference::name() const
 {
-    return QString::fromUtf8(git_reference_name(d.data()));
+    return std::string::fromUtf8(git_reference_name(d.data()));
 }
 
 Reference Reference::resolve() const
@@ -79,14 +79,14 @@ Repository Reference::owner() const
     return Repository(git_reference_owner(d.data()));
 }
 
-void Reference::setSymbolicTarget(const QString& target, const QString &message)
+void Reference::setSymbolicTarget(const std::string& target, const std::string &message)
 {
     git_reference* rp;
     qGitThrow(git_reference_symbolic_set_target(&rp, data(), PathCodec::toLibGit2(target), message.toUtf8()));
     d = ptr_type(rp, git_reference_free);
 }
 
-void Reference::setTarget(const OId& oid, const QString &message)
+void Reference::setTarget(const OId& oid, const std::string &message)
 {
     git_reference* rp;
     qGitThrow(git_reference_set_target(&rp, data(), oid.constData(), message.toUtf8()));

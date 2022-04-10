@@ -23,7 +23,7 @@
 
 #include "object.h"
 
-#include <QtCore/QString>
+#include <string>
 
 namespace LibGit2pp
 {
@@ -77,7 +77,7 @@ namespace LibGit2pp
              * @param filename the filename of the desired entry
              * @return the tree entry; NULL if not found
              */
-            TreeEntry entryByName(const QString& fileName) const;
+            TreeEntry entryByName(const std::string& fileName) const;
 
             /**
              * Lookup a tree entry by its position in the tree

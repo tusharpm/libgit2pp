@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "difffile.h"
+#include "git2pp/difffile.h"
 
 #include "private/pathcodec.h"
 
@@ -26,7 +26,7 @@ DiffFile::DiffFile(const git_diff_file *diff) : m_diff_file(diff)
 {
 }
 
-QString DiffFile::path() const
+std::string DiffFile::path() const
 {
     return PathCodec::fromLibGit2(m_diff_file != NULL ? m_diff_file->path : "");
 }

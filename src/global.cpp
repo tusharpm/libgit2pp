@@ -16,11 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "global.h"
+#include "git2pp/global.h"
 
 #include "git2.h"
 
-#include <QAtomicInt>
+#include <atomic>
 
 namespace LibGit2pp
 {
@@ -29,14 +29,14 @@ namespace internal {
 const int Uninitialized = 0;
 const int Initialized = 1;
 
-QAtomicInt LibInitialized(Uninitialized);
+std::atomic_int LibInitialized(Uninitialized);
 }
 
 using namespace internal;
 
 bool initLibGit2pp() {
     bool ret = false;
-    if (LibInitialized.fetchAndAddRelaxed(Initialized) == Uninitialized) {
+    if (LibInitialized.fetch_add(Initialized, std::memory_order_relaxed) == Uninitialized) {
         git_libgit2_init();
         ret = true;
     }
@@ -45,12 +45,8 @@ bool initLibGit2pp() {
 
 bool shutdownLibGit2pp() {
     bool ret = false;
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-    if (int(LibInitialized) > Uninitialized) {
-#else
     if (LibInitialized.load() > Uninitialized) {
-#endif
-        if (LibInitialized.fetchAndAddRelaxed(-Initialized) == Initialized) {
+        if (LibInitialized.fetch_add(-Initialized, std::memory_order_relaxed) == Initialized) {
             git_libgit2_shutdown();
             ret = true;
         }

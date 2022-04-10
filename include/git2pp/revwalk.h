@@ -118,7 +118,7 @@ public:
      * @param glob the glob that reference names shall match.
      * @throws LibGit2pp::Exception
      */
-    void push(const QString& glob) const;
+    void push(const std::string& glob) const;
 
     /**
      * Mark HEAD as a starting point.
@@ -136,7 +136,7 @@ public:
      * according to Git range syntax, i.e. walk all commits that are
      * reachable from commit2 excluding those reachable from commit1.
      */
-    void pushRange(const QString& range) const;
+    void pushRange(const std::string& range) const;
 
     /**
      * Hide the commit with the given oid and its ancestors from the walker.
@@ -180,7 +180,7 @@ public:
      * @param glob the glob that reference names shall match.
      * @throws LibGit2pp::Exception
      */
-    void hide(const QString& glob) const;
+    void hide(const std::string& glob) const;
 
     /**
      * Hide HEAD from the walker.

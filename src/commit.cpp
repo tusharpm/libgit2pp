@@ -49,12 +49,12 @@ OId Commit::oid() const
     return OId(git_commit_id(data()));
 }
 
-QString Commit::message() const
+std::string Commit::message() const
 {
-    return QString::fromUtf8(git_commit_message(data()));
+    return std::string::fromUtf8(git_commit_message(data()));
 }
 
-QString Commit::shortMessage(int maxLen) const
+std::string Commit::shortMessage(int maxLen) const
 {
     return message().left(maxLen).split(QRegExp("(\\r|\\n)")).first();
 }
@@ -105,11 +105,11 @@ OId Commit::parentId(unsigned n) const
     return OId(git_commit_parent_id(data(), n));
 }
 
-OId Commit::amend(const Tree& tree, const QString& ref, const QString& message, const Signature& author, const Signature& committer)
+OId Commit::amend(const Tree& tree, const std::string& ref, const std::string& message, const Signature& author, const Signature& committer)
 {
     OId oid;
     qGitThrow(git_commit_amend(oid.data(), constData(), ref.isEmpty() ? NULL : PathCodec::toLibGit2(ref).constData(), author.data(), committer.data(),
-                               NULL, message.isNull() ? NULL : message.toUtf8().constData(), tree.constData()));
+                               NULL, message.empty() ? NULL : message.c_str(), tree.constData()));
     return oid;
 }
 

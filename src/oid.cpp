@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "oid.h"
-#include "exception.h"
+#include "git2pp/oid.h"
+#include "git2pp/exception.h"
 
 namespace LibGit2pp
 {
@@ -56,7 +56,7 @@ void OId::fromHex(const QByteArray& hex)
     d.resize(len / 2);
 }
 
-void OId::fromString(const QString& string)
+void OId::fromString(const std::string& string)
 {
     fromHex(string.toUtf8());
 }

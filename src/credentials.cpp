@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "credentials.h"
+#include "git2pp/credentials.h"
 #include "private/credentials.h"
 
 #include "private/pathcodec.h"
@@ -52,7 +52,7 @@ int CredentialsPrivate::create(Credentials &credentials, git_cred **cred, const 
 
 
 struct SSHCredentialsPrivate : public CredentialsPrivate {
-    SSHCredentialsPrivate(const QString &privateKeyPath, const QString &publicKeyPath, const QByteArray &userName, const QByteArray &passphrase) :
+    SSHCredentialsPrivate(const std::string &privateKeyPath, const std::string &publicKeyPath, const QByteArray &userName, const QByteArray &passphrase) :
         CredentialsPrivate(GIT_CREDTYPE_SSH_KEY | GIT_CREDTYPE_USERNAME),
         m_private_key_path(PathCodec::toLibGit2(privateKeyPath)),
         m_public_key_path(PathCodec::toLibGit2(publicKeyPath)),
@@ -95,10 +95,10 @@ Credentials::Credentials(CredentialsPrivate &p) :
 
 bool Credentials::isEmpty() const
 {
-    return d_ptr.isNull();
+    return !d_ptr;
 }
 
-Credentials Credentials::ssh(const QString &privateKeyPath, const QString &publicKeyPath, const QByteArray &userName, const QByteArray &passphrase)
+Credentials Credentials::ssh(const std::string &privateKeyPath, const std::string &publicKeyPath, const QByteArray &userName, const QByteArray &passphrase)
 {
     return Credentials(*new SSHCredentialsPrivate(privateKeyPath, publicKeyPath, userName, passphrase));
 }

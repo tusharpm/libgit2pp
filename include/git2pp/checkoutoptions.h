@@ -71,7 +71,7 @@ namespace LibGit2pp
          * Set the target directory where the files will be checked out.
          * The default is to use the working directory.
          */
-        void setTargetDirectory(const QString &dir);
+        void setTargetDirectory(const std::string &dir);
 
         /**
          * Sets the paths which are checked out.
@@ -79,13 +79,13 @@ namespace LibGit2pp
          * The wildcard syntax is that accepted by the POSIX \c fnmatch function.
          * @param paths The paths to checkout.
          */
-        void setPaths(const QList<QString> &paths);
+        void setPaths(const QList<std::string> &paths);
 
         const git_checkout_options* data() const;
 
     private:
         class Private;
-        QSharedPointer<Private> d_ptr;
+        std::shared_ptr<Private> d_ptr;
         Q_DECLARE_PRIVATE()
     };
 

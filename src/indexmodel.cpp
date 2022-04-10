@@ -18,9 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "indexmodel.h"
-
-#include <qgitindexentry.h>
+#include "git2pp/indexmodel.h"
+#include "git2pp/indexentry.h"
 
 namespace LibGit2pp
 {

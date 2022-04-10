@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "diff.h"
-#include "diffdelta.h"
+#include "git2pp/diff.h"
+#include "git2pp/diffdelta.h"
 
 namespace LibGit2pp
 {
@@ -29,18 +29,17 @@ Diff::Diff(git_diff *diff) :
 
 size_t Diff::numDeltas() const
 {
-    size_t ret = 0;
-    if (!d.isNull()) {
-        ret = git_diff_num_deltas(d.data());
+    if (d) {
+        return git_diff_num_deltas(d.get());
     }
-    return ret;
+    return 0;
 }
 
 DiffDelta Diff::delta(size_t index) const
 {
     const git_diff_delta *delta = 0;
-    if (!d.isNull()) {
-        delta = git_diff_get_delta(d.data(), index);
+    if (d) {
+        delta = git_diff_get_delta(d.get(), index);
     }
     return DiffDelta(delta);
 }

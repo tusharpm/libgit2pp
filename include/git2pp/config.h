@@ -21,7 +21,7 @@
 #ifndef LIBGIT2PP_CONFIG_H
 #define LIBGIT2PP_CONFIG_H
 
-#include <QtCore/QVariant>
+#include <optional>
 
 #include "git2.h"
 
@@ -67,14 +67,14 @@ namespace LibGit2pp
           *
           * @return true on success
           */
-        bool append(const QString& path, git_config_level_t level, const Repository &repo = Repository(), bool force = false);
+        bool append(const std::string& path, git_config_level_t level, const Repository &repo = Repository(), bool force = false);
 
         /**
           * Reads a single value from the configuration.
           *
           * @return the value as QVariant or an empty QVariant instance
           */
-        QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
+        std::optional<std::string> value(const std::string &key) const;
 
         /**
           * Writes a value in the configuration with the highest priority.
@@ -84,27 +84,27 @@ namespace LibGit2pp
           *
           * @todo handle the QVariant type correctly
           */
-        void setValue(const QString &key, const QVariant &value);
+        void setValue(const std::string &key, const std::string &value);
 
         /**
           * Remove a value from the configuration.
           *
           * @param key the name for the value to remove
           */
-        void remove(const QString &key);
+        void remove(const std::string &key);
 
     public:
         /**
           * Searches for the global configuration file located in $HOME.
           * @see git_config_find_global
           */
-        static QString findGlobal();
+        static std::string findGlobal();
 
         /**
           * Searches for the system configuration file.
           * @see git_config_find_system
           */
-        static QString findSystem();
+        static std::string findSystem();
 
     private:
         git_config *    d; //!< internal pointer to the libgit2 config instance

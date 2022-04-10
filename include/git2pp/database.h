@@ -26,7 +26,7 @@
 #include "databasebackend.h"
 #include "oid.h"
 
-#include <QtCore/QString>
+#include <string>
 
 namespace LibGit2pp
 {
@@ -69,7 +69,7 @@ namespace LibGit2pp
             * @return GIT_SUCCESS if the database opened; otherwise an error
             * code describing why the open was not possible.
             */
-            int open(const QString& objectsDir);
+            int open(const std::string& objectsDir);
 
             /**
              * Close an open object database.

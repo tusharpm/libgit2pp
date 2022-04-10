@@ -82,14 +82,14 @@ public:
      * @return OID of the newly created commit
      * @throws LibGit2pp::Exception
      */
-    OId commit(const Signature &committer, const Signature &author = Signature(), const QString &message = QString());
+    OId commit(const Signature &committer, const Signature &author = Signature(), const std::string &message = std::string());
 
     git_rebase *data() const;
     git_rebase *constData() const;
 
 private:
     struct Private;
-    QSharedPointer<Private> d_ptr;
+    std::shared_ptr<Private> d_ptr;
 };
 /** @} */
 }

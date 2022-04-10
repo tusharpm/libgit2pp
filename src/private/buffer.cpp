@@ -34,7 +34,7 @@ Buffer::~Buffer()
     git_buf_free(&d);
 }
 
-QString Buffer::asPath() const
+std::string Buffer::asPath() const
 {
     return PathCodec::fromLibGit2(d.ptr);
 }

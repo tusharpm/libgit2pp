@@ -18,10 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "git2.h"
+#include "git2pp/exception.h"
 
-#include "exception.h"
-#include <QtCore/QString>
+#include "git2.h"
+#include <string>
 
 namespace LibGit2pp
 {
@@ -70,7 +70,7 @@ Exception::Exception() :
     }
 }
 
-Exception::Exception(const QString& msg, Category category) :
+Exception::Exception(const std::string& msg, Category category) :
     m_msg(msg.toLatin1()),
     m_category(category)
 {

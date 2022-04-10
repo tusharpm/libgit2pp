@@ -28,14 +28,14 @@ private slots:
 private:
     QPointer<Repository> repo;
 
-    const QString repoPath;
+    const std::string repoPath;
 };
 
 
 
 TestInit::TestInit() :
     repo(0),
-    repoPath(QString(VALUE_TO_STR(TEST_DIR)) + "/repo")
+    repoPath(std::string(VALUE_TO_STR(TEST_DIR)) + "/repo")
 {
 }
 

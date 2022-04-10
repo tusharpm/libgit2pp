@@ -21,11 +21,10 @@
 */
 #include "TestHelpers.h"
 
-#include "repository.h"
-#include "commit.h"
-#include "diffdelta.h"
-#include "difffile.h"
-#include <QFile>
+#include "git2pp/repository.h"
+#include "git2pp/commit.h"
+#include "git2pp/diffdelta.h"
+#include "git2pp/difffile.h"
 
 using namespace LibGit2pp;
 
@@ -42,11 +41,11 @@ private slots:
     void checkoutPaths();
 
 private:
-    void fetch(const QString& branch, const QString& repoPath, const QString& remote);
+    void fetch(const std::string& branch, const std::string& repoPath, const std::string& remote);
 };
 
 
-void TestCheckout::fetch(const QString& branch, const QString& repoPath, const QString& remote = "origin")
+void TestCheckout::fetch(const std::string& branch, const std::string& repoPath, const std::string& remote = "origin")
 {
     try {
         Repository repo;
@@ -114,7 +113,7 @@ void TestCheckout::checkoutCommitAsTree()
 
 void TestCheckout::checkoutHead()
 {
-    const QString fileName(testdir + "/CMakeLists.txt");
+    const std::string fileName(testdir + "/CMakeLists.txt");
 
     Repository repo;
     try {
@@ -130,7 +129,7 @@ void TestCheckout::checkoutHead()
 
 void TestCheckout::checkoutPaths()
 {
-    const QStringList paths("CMakeLists.txt");
+    const std::stringList paths("CMakeLists.txt");
     Repository repo;
     try {
         repo.clone(FileRepositoryUrl, testdir);
@@ -143,7 +142,7 @@ void TestCheckout::checkoutPaths()
     }
 
     StatusList status = repo.status(StatusOptions(StatusOptions::ShowOnlyIndex, StatusOptions::ExcludeSubmodules));
-    QStringList checkedoutPaths;
+    std::stringList checkedoutPaths;
     for (size_t i = 0; i < status.entryCount(); ++i) {
         const StatusEntry entry = status.entryByIndex(i);
         checkedoutPaths << entry.headToIndex().newFile().path();

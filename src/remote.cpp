@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "remote.h"
-#include "exception.h"
+#include "git2pp/remote.h"
+#include "git2pp/exception.h"
 #include "private/remotecallbacks.h"
 #include "private/strarray.h"
 
@@ -40,10 +40,10 @@ struct Remote::Private : public internal::RemoteListener
         return 0;
     }
 
-    void push(const QList<QString> &refSpecs)
+    void push(const QList<std::string> &refSpecs)
     {
         QList<QByteArray> baRefSpecs;
-        foreach (const QString &ref, refSpecs) {
+        foreach (const std::string &ref, refSpecs) {
             baRefSpecs.append(ref.toLatin1());
         }
         internal::StrArray refspecs(baRefSpecs);
@@ -53,7 +53,7 @@ struct Remote::Private : public internal::RemoteListener
         qGitThrow(git_remote_push(m_data.data(), &refspecs.data(), &opts));
     }
 
-    QSharedPointer<git_remote> m_data;
+    std::shared_ptr<git_remote> m_data;
 
 private:
     Remote &m_parent;
@@ -67,12 +67,12 @@ Remote::Remote(git_remote *remote, const Credentials &credentials, QObject *pare
 {
 }
 
-QString Remote::url() const
+std::string Remote::url() const
 {
-    return QString::fromLatin1(git_remote_url(data()));
+    return std::string::fromLatin1(git_remote_url(data()));
 }
 
-void Remote::push(const QList<QString> &refSpecs)
+void Remote::push(const QList<std::string> &refSpecs)
 {
     d_ptr->push(refSpecs);
 }

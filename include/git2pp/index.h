@@ -74,7 +74,7 @@ namespace LibGit2pp
              * @param index_path the path to the index file in disk
              * @throws LibGit2pp::Exception
              */
-            void open(const QString& indexPath);
+            void open(const std::string& indexPath);
 
             /**
              * Create a new tree object from the index
@@ -126,7 +126,7 @@ namespace LibGit2pp
              * @param path path to search
              * @return an index >= 0 if found, -1 otherwise
              */
-            int find(const QString& path);
+            int find(const std::string& path);
 
             /**
              * Add or update an index entry from a file in disk.
@@ -134,7 +134,7 @@ namespace LibGit2pp
              * @param path filename to add
              * @throws LibGit2pp::Exception
              */
-            void addByPath(const QString& path);
+            void addByPath(const std::string& path);
 
             /**
              * Remove an entry from the index given the path
@@ -142,7 +142,7 @@ namespace LibGit2pp
              * @param stage stage of the entry to remove
              * @throws LibGit2pp::Exception
              */
-            void remove(const QString& path, int stage);
+            void remove(const std::string& path, int stage);
 
             /**
              * Insert an entry into the index.
@@ -191,7 +191,7 @@ namespace LibGit2pp
             const git_index* constData() const;
 
         private:
-            typedef QSharedPointer<git_index> ptr_type;
+            typedef std::shared_ptr<git_index> ptr_type;
             ptr_type d;
     };
 

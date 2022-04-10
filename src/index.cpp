@@ -18,12 +18,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "index.h"
-#include "indexentry.h"
-#include "tree.h"
-#include "exception.h"
-
-#include "repository.h"
+#include "git2pp/index.h"
+#include "git2pp/indexentry.h"
+#include "git2pp/tree.h"
+#include "git2pp/exception.h"
+#include "git2pp/repository.h"
 
 #include "private/pathcodec.h"
 
@@ -44,7 +43,7 @@ Index::~Index()
 {
 }
 
-void Index::open(const QString& indexPath)
+void Index::open(const std::string& indexPath)
 {
     d.clear();
     git_index *index = 0;
@@ -74,17 +73,17 @@ void Index::write()
     qGitThrow(git_index_write(data()));
 }
 
-int Index::find(const QString& path)
+int Index::find(const std::string& path)
 {
     return git_index_find(NULL, data(), PathCodec::toLibGit2(path));
 }
 
-void Index::addByPath(const QString& path)
+void Index::addByPath(const std::string& path)
 {
     qGitThrow(git_index_add_bypath(data(), PathCodec::toLibGit2(path)));
 }
 
-void Index::remove(const QString& path, int stage)
+void Index::remove(const std::string& path, int stage)
 {
     qGitThrow(git_index_remove(data(), PathCodec::toLibGit2(path), stage));
 }
@@ -111,7 +110,7 @@ unsigned int Index::entryCount() const
 
 bool Index::hasConflicts() const
 {
-    return !d.isNull() && git_index_has_conflicts(d.data());
+    return d && git_index_has_conflicts(d.data());
 }
 
 git_index* Index::data() const

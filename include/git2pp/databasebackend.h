@@ -21,7 +21,7 @@
 #ifndef LIBGIT2PP_DATABASEBACKEND_H
 #define LIBGIT2PP_DATABASEBACKEND_H
 
-#include <QtCore/QString>
+#include <string>
 
 #include "git2.h"
 

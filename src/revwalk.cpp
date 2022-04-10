@@ -18,13 +18,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <iostream>
+#include "git2pp/revwalk.h"
 
-#include "revwalk.h"
-#include "commit.h"
-#include "ref.h"
-#include "exception.h"
-#include "repository.h"
+#include <iostream>
+#include "git2pp/commit.h"
+#include "git2pp/ref.h"
+#include "git2pp/exception.h"
+#include "git2pp/repository.h"
 
 
 namespace LibGit2pp
@@ -66,7 +66,7 @@ void RevWalk::push(const Reference& reference) const
     qGitThrow(git_revwalk_push(m_revWalk, reference.target().constData()));
 }
 
-void RevWalk::push(const QString& glob) const
+void RevWalk::push(const std::string& glob) const
 {
     qGitThrow(git_revwalk_push_glob(m_revWalk, glob.toUtf8().constData()));
 }
@@ -76,7 +76,7 @@ void RevWalk::pushHead() const
     qGitThrow(git_revwalk_push_head(m_revWalk));
 }
 
-void RevWalk::pushRange(const QString& range) const
+void RevWalk::pushRange(const std::string& range) const
 {
     qGitThrow(git_revwalk_push_range(m_revWalk,range.toUtf8().constData()));
 }
@@ -96,7 +96,7 @@ void RevWalk::hide(const Reference& reference) const
     qGitThrow(git_revwalk_hide_glob(m_revWalk, reference.name().toUtf8().data()));
 }
 
-void RevWalk::hide(const QString& glob) const
+void RevWalk::hide(const std::string& glob) const
 {
     qGitThrow(git_revwalk_hide_glob(m_revWalk, glob.toUtf8().data()));
 }

@@ -13,7 +13,7 @@ void sleep::ms(int msec)
 }
 
 
-bool removeDir(const QString & dirName)
+bool removeDir(const std::string & dirName)
 {
     bool result = true;
     QDir dir(dirName);
@@ -46,7 +46,7 @@ bool removeDir(const QString & dirName)
     return result;
 }
 
-bool copyDir(QString srcPath, QString destPath)
+bool copyDir(std::string srcPath, std::string destPath)
 {
     QDir srcDir(srcPath);
     if (!srcDir.exists()) {
@@ -54,8 +54,8 @@ bool copyDir(QString srcPath, QString destPath)
         return false;
     }
 
-    foreach (QString dir, srcDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
-        QString subDestPath = destPath + QDir::separator() + dir;
+    foreach (std::string dir, srcDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+        std::string subDestPath = destPath + QDir::separator() + dir;
         if (!srcDir.mkpath(subDestPath)) {
             qDebug() << "Could not create target directory:" << subDestPath;
             return false;
@@ -65,7 +65,7 @@ bool copyDir(QString srcPath, QString destPath)
         }
     }
 
-    foreach (QString file, srcDir.entryList(QDir::Files)) {
+    foreach (std::string file, srcDir.entryList(QDir::Files)) {
         if (!QFile::copy(srcPath + QDir::separator() + file, destPath + QDir::separator() + file)) {
             qDebug() << "Could not copy" << file << "from" << srcPath << "to" << destPath;
             return false;
