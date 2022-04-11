@@ -23,7 +23,7 @@
 #include "git2.h"
 
 #include "libgit2pp_config.h"
-#include "libgit2pp_flags.h"
+#include "libgit2pp_types.h"
 
 namespace LibGit2pp
 {

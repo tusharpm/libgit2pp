@@ -44,39 +44,39 @@ Reference::~Reference()
 
 OId Reference::target() const
 {
-    return OId(git_reference_target(d.data()));
+    return OId(git_reference_target(d.get()));
 }
 
 std::string Reference::symbolicTarget() const
 {
-    return std::string::fromUtf8(git_reference_symbolic_target(d.data()));
+    return std::string::fromUtf8(git_reference_symbolic_target(d.get()));
 }
 
 bool Reference::isDirect() const
 {
-    return git_reference_type(d.data()) == GIT_REF_OID;
+    return git_reference_type(d.get()) == GIT_REF_OID;
 }
 
 bool Reference::isSymbolic() const
 {
-    return git_reference_type(d.data()) == GIT_REF_SYMBOLIC;
+    return git_reference_type(d.get()) == GIT_REF_SYMBOLIC;
 }
 
 std::string Reference::name() const
 {
-    return git_reference_name(d.data());
+    return git_reference_name(d.get());
 }
 
 Reference Reference::resolve() const
 {
     git_reference *ref;
-    qGitThrow(git_reference_resolve(&ref, d.data()));
+    qGitThrow(git_reference_resolve(&ref, d.get()));
     return Reference(ref);
 }
 
 Repository Reference::owner() const
 {
-    return Repository(git_reference_owner(d.data()));
+    return Repository(git_reference_owner(d.get()));
 }
 
 void Reference::setSymbolicTarget(const std::string& target, const std::string &message)
@@ -100,12 +100,12 @@ bool Reference::isNull() const
 
 git_reference* Reference::data() const
 {
-    return d.data();
+    return d.get();
 }
 
 const git_reference* Reference::constData() const
 {
-    return d.data();
+    return d.get();
 }
 
 } // namespace LibGit2pp

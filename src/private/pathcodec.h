@@ -19,8 +19,8 @@
 #ifndef LIBGIT2PP_PATHCODEC_H
 #define LIBGIT2PP_PATHCODEC_H
 
-#include <QByteArray>
 #include <string>
+#include "git2pp/libgit2pp_types.h"
 
 class PathCodec
 {

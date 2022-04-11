@@ -44,15 +44,15 @@ OId::~OId()
 
 bool OId::isValid() const
 {
-    return ( !d.isEmpty() &&
-             (d.length() <= GIT_OID_RAWSZ) &&
+    return ( !d.empty() &&
+             (d.size() <= GIT_OID_RAWSZ) &&
              (d != QByteArray(GIT_OID_RAWSZ, 0))
              );
 }
 
 void OId::fromHex(const std::string& hex)
 {
-    int len = std::min(hex.length(), GIT_OID_HEXSZ);
+    int len = std::min(hex.size(), GIT_OID_HEXSZ);
     qGitThrow(git_oid_fromstrn(data(), hex.data(), len));
     d.resize(len / 2);
 }
@@ -65,7 +65,7 @@ void OId::fromString(const std::string& string)
 
 void OId::fromRawData(const QByteArray& raw)
 {
-    qGitThrow(raw.length() < GIT_OID_HEXSZ);
+    qGitThrow(raw.size() < GIT_OID_HEXSZ);
     d = raw;
 }
 
@@ -119,7 +119,7 @@ bool operator !=(const OId &oid1, const OId &oid2)
 
 int OId::length() const
 {
-    return d.length() * 2;
+    return d.size() * 2;
 }
 
 } // LibGit2pp

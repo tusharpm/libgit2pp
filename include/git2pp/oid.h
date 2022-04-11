@@ -25,8 +25,8 @@
 #include <chrono>
 
 #include "git2.h"
-
 #include "libgit2pp_config.h"
+#include "libgit2pp_types.h"
 
 namespace LibGit2pp
 {
@@ -135,7 +135,7 @@ namespace LibGit2pp
             /**
              * Format a OId into a hex string.
              */
-            QByteArray format() const;
+            std::string format() const;
 
             /**
              * Format a git_oid into a loose-object path string.
@@ -143,7 +143,7 @@ namespace LibGit2pp
              * The resulting string is "aa/...", where "aa" is the first two
              * hex digitis of the oid and "..." is the remaining 38 digits.
              */
-            QByteArray pathFormat() const;
+            std::string pathFormat() const;
 
             git_oid* data();
             const git_oid* constData() const;

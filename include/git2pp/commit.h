@@ -21,11 +21,10 @@
 #ifndef LIBGIT2PP_COMMIT_H
 #define LIBGIT2PP_COMMIT_H
 
+#include "libgit2pp_types.h"
 #include "object.h"
-#include "tree.h"
 #include "signature.h"
-
-#include <chrono>
+#include "tree.h"
 
 namespace LibGit2pp
 {
@@ -89,7 +88,7 @@ namespace LibGit2pp
             /**
              * Get the commit time (i.e. committer time) of this commit.
              */
-            QDateTime dateTime() const;
+            ZonedTime dateTime() const;
 
             /**
              * Get the timezone offset.

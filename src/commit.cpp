@@ -51,7 +51,7 @@ OId Commit::oid() const
 
 std::string Commit::message() const
 {
-    return std::string::fromUtf8(git_commit_message(data()));
+    return git_commit_message(data());
 }
 
 std::string Commit::shortMessage(int maxLen) const
@@ -59,10 +59,10 @@ std::string Commit::shortMessage(int maxLen) const
     return message().left(maxLen).split(QRegExp("(\\r|\\n)")).first();
 }
 
-QDateTime Commit::dateTime() const
+ZonedTime Commit::dateTime() const
 {
-    QDateTime dateTime;
-    dateTime.setTime_t(git_commit_time(data()));
+    ZonedTime dateTime{};
+    dateTime.time = git_commit_time(data());
     return dateTime;
 }
 
@@ -108,7 +108,7 @@ OId Commit::parentId(unsigned n) const
 OId Commit::amend(const Tree& tree, const std::string& ref, const std::string& message, const Signature& author, const Signature& committer)
 {
     OId oid;
-    qGitThrow(git_commit_amend(oid.data(), constData(), ref.isEmpty() ? NULL : PathCodec::toLibGit2(ref).constData(), author.data(), committer.data(),
+    qGitThrow(git_commit_amend(oid.data(), constData(), ref.empty() ? NULL : PathCodec::toLibGit2(ref).constData(), author.data(), committer.data(),
                                NULL, message.empty() ? NULL : message.c_str(), tree.constData()));
     return oid;
 }

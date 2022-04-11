@@ -19,8 +19,9 @@
 #ifndef LIBGIT2PP_STRARRAY_H
 #define LIBGIT2PP_STRARRAY_H
 
-#include <list>
+#include <vector>
 #include "git2.h"
+#include "git2pp/libgit2pp_types.h"
 
 namespace LibGit2pp {
 namespace internal {
@@ -28,7 +29,7 @@ namespace internal {
 class StrArray
 {
 public:
-    explicit StrArray(const std::list<QByteArray> &list = std::list<QByteArray>());
+    explicit StrArray(const std::vector<QByteArray> &list = {});
     StrArray(const StrArray &other) = delete;
     StrArray(StrArray &&other);
     ~StrArray();
@@ -41,7 +42,7 @@ public:
     const git_strarray& data() const;
 
 private:
-    std::list<QByteArray> m_strings;
+    std::vector<QByteArray> m_strings;
     git_strarray m_data{nullptr, 0};
 };
 

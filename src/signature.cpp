@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "signature.h"
-#include "exception.h"
+#include "git2pp/signature.h"
+#include "git2pp/exception.h"
 
 namespace LibGit2pp
 {
@@ -35,22 +35,22 @@ public:
     std::shared_ptr<git_signature> signature;
 };
 
-Signature::Signature(const std::string& name, const std::string& email, QDateTime dateTime)
+Signature::Signature(const std::string& name, const std::string& email, ZonedTime dateTime)
 {
     git_signature *sig = 0;
-    qGitThrow(git_signature_new(&sig, name.toUtf8(), email.toUtf8(), dateTime.toTime_t(), dateTime.utcOffset() / 60));
-    d_ptr = std::shared_ptr<Private>(new Private(sig, true));
+    qGitThrow(git_signature_new(&sig, name.c_str(), email.c_str(), dateTime.time, dateTime.offset));
+    d_ptr = std::make_shared<Private>(sig, true);
 }
 
 Signature::Signature(const std::string& name, const std::string& email)
 {
     git_signature *sig = 0;
-    qGitThrow(git_signature_now(&sig, name.toUtf8(), email.toUtf8()));
-    d_ptr = std::shared_ptr<Private>(new Private(sig, true));
+    qGitThrow(git_signature_now(&sig, name.c_str(), email.c_str()));
+    d_ptr = std::make_shared<Private>(sig, true);
 }
 
 Signature::Signature(const git_signature *signature) :
-    d_ptr(new Private(signature, false))
+    d_ptr(std::make_shared<Private>(signature, false))
 {
 }
 
@@ -58,7 +58,7 @@ std::string Signature::name() const
 {
     std::string ret;
     if (d_ptr->signature) {
-        ret = std::string::fromUtf8(d_ptr->signature->name);
+        ret = d_ptr->signature->name;
     }
     return ret;
 }
@@ -67,24 +67,23 @@ std::string Signature::email() const
 {
     std::string ret;
     if (d_ptr->signature) {
-        ret = std::string::fromUtf8(d_ptr->signature->email);
+        ret = d_ptr->signature->email;
     }
     return ret;
 }
 
-QDateTime Signature::when() const
+ZonedTime Signature::when() const
 {
-    QDateTime dt;
+    ZonedTime dt{};
     if (d_ptr->signature) {
-        dt.setTime_t(d_ptr->signature->when.time);
-        dt.setUtcOffset(d_ptr->signature->when.offset * 60);
+        dt = d_ptr->signature.when;
     }
     return dt;
 }
 
 const git_signature *Signature::data() const
 {
-    return d_ptr->signature.data();
+    return d_ptr->signature.get();
 }
 
 } // namespace LibGit2pp

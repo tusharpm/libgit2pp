@@ -17,10 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef LIBGIT2PP_LIB_FLAGS_H
-#define LIBGIT2PP_LIB_FLAGS_H
+#ifndef LIBGIT2PP_LIB_TYPES_H
+#define LIBGIT2PP_LIB_TYPES_H
 
+#include <chrono>
 #include <type_traits>
+#include <vector>
+#include "git2.h"
 
 namespace LibGit2pp
 {
@@ -29,17 +32,22 @@ template <typename T>
 class FlagsFromEnumeration
 {
 public:
-    FlagsFromEnumeration() : data{0} {}
-    FlagsFromEnumeration(T value) : data{value} {}
+    FlagsFromEnumeration(T value = {}) : data{value} {}
 
     operator T() const {
-        return static_cast<T>(data);
+        return data;
     }
 
 private:
-    std::underlying_type_t<T> data;
+    T data;
 };
+
+struct ZonedTime : git_time
+{
+};
+
+using QByteArray = std::vector<char>;
 
 }
 
-#endif // LIBGIT2PP_LIB_FLAGS_H
+#endif // LIBGIT2PP_LIB_TYPES_H

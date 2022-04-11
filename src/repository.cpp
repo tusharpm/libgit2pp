@@ -18,10 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#include <QtCore/QDir>
-#include <QtCore/QFileInfo>
-#include <QtCore/QVector>
-
 #include "git2pp/repository.h"
 #include "git2pp/config.h"
 #include "git2pp/tag.h"
@@ -37,6 +33,7 @@
 #include "private/pathcodec.h"
 #include "private/remotecallbacks.h"
 #include "private/strarray.h"
+#include <map>
 
 namespace {
     void do_not_free(git_repository*) {}
@@ -51,7 +48,7 @@ class Repository::Private : public internal::RemoteListener
 public:
     typedef std::shared_ptr<git_repository> ptr_type;
     ptr_type d;
-    QMap<std::string, Credentials> m_remote_credentials;
+    std::map<std::string, Credentials> m_remote_credentials;
     Repository &m_owner;
 
     Private(git_repository *repository, bool own, Repository &owner) :
@@ -92,7 +89,7 @@ public:
         if (!d){
             throw Exception("Repository::" + std::string(funcName) + "(): no repository available");
         }
-        return d.data();
+        return d.get();
     }
 
     int progress(int transferProgress)
@@ -169,7 +166,7 @@ bool Repository::isHeadUnborn() const
     return qGitThrow(git_repository_head_unborn(SAFE_DATA)) == 1;
 }
 
-bool Repository::isEmpty() const
+bool Repository::empty() const
 {
     return qGitThrow(git_repository_is_empty(SAFE_DATA)) == 1;
 }
@@ -284,13 +281,13 @@ Reference Repository::createSymbolicRef(const std::string& name, const std::stri
 
 OId Repository::createCommit(const Tree& tree, const std::list<Commit>& parents, const Signature& author, const Signature& committer, const std::string& message, const std::string &ref)
 {
-    QVector<const git_commit*> p;
-    foreach (const Commit& parent, parents) {
-        p.append(parent.data());
+    std::vector<const git_commit*> p;
+    for (const Commit& parent : parents) {
+        p.push_back(parent.data());
     }
 
     OId oid;
-    qGitThrow(git_commit_create(oid.data(), SAFE_DATA, ref.isEmpty() ? NULL : PathCodec::toLibGit2(ref).constData(), author.data(), committer.data(),
+    qGitThrow(git_commit_create(oid.get(), SAFE_DATA, ref.empty() ? NULL : PathCodec::toLibGit2(ref).constData(), author.data(), committer.data(),
                                 NULL, message.toUtf8(), tree.data(), p.size(), p.data()));
     return oid;
 }
@@ -300,7 +297,7 @@ OId Repository::createTag(const std::string& name,
                                   bool overwrite)
 {
     OId oid;
-    qGitThrow(git_tag_create_lightweight(oid.data(), SAFE_DATA, PathCodec::toLibGit2(name),
+    qGitThrow(git_tag_create_lightweight(oid.get(), SAFE_DATA, PathCodec::toLibGit2(name),
                                          target.data(), overwrite));
     return oid;
 }
@@ -312,7 +309,7 @@ OId Repository::createTag(const std::string& name,
                                   bool overwrite)
 {
     OId oid;
-    qGitThrow(git_tag_create(oid.data(), SAFE_DATA, PathCodec::toLibGit2(name), target.data(),
+    qGitThrow(git_tag_create(oid.get(), SAFE_DATA, PathCodec::toLibGit2(name), target.data(),
                              tagger.data(), message.toUtf8(), overwrite));
     return oid;
 }
@@ -325,14 +322,14 @@ void Repository::deleteTag(const std::string& name)
 OId Repository::createBlobFromFile(const std::string& path)
 {
     OId oid;
-    qGitThrow(git_blob_create_fromdisk(oid.data(), SAFE_DATA, PathCodec::toLibGit2(path)));
+    qGitThrow(git_blob_create_fromdisk(oid.get(), SAFE_DATA, PathCodec::toLibGit2(path)));
     return oid;
 }
 
 OId Repository::createBlobFromBuffer(const QByteArray& buffer)
 {
     OId oid;
-    qGitThrow(git_blob_create_frombuffer(oid.data(), SAFE_DATA, buffer.data(), buffer.size()));
+    qGitThrow(git_blob_create_frombuffer(oid.get(), SAFE_DATA, buffer.data(), buffer.size()));
     return oid;
 }
 
@@ -441,12 +438,12 @@ Index Repository::mergeTrees(const Tree &our, const Tree &their, const Tree &anc
 
 git_repository* Repository::data() const
 {
-    return d_ptr->d.data();
+    return d_ptr->d.get();
 }
 
 const git_repository* Repository::constData() const
 {
-    return d_ptr->d.data();
+    return d_ptr->d.get();
 }
 
 
@@ -459,7 +456,7 @@ void Repository::setRemoteCredentials(const std::string& remoteName, Credentials
 void Repository::clone(const std::string& url, const std::string& path)
 {
     const std::string remoteName("origin");
-    internal::RemoteCallbacks remoteCallbacks(d_ptr.data(), d_ptr->m_remote_credentials.value(remoteName));
+    internal::RemoteCallbacks remoteCallbacks(d_ptr.get(), d_ptr->m_remote_credentials.at(remoteName));
 
     git_repository *repo = 0;
     git_clone_options opts = GIT_CLONE_OPTIONS_INIT;
@@ -501,7 +498,7 @@ std::unique_ptr<Remote> Repository::remote(const std::string &remoteName) const
 {
     git_remote *r = NULL;
     qGitThrow(git_remote_lookup(&r, SAFE_DATA, remoteName.toLatin1()));
-    return std::make_unique<Remote>(r, d_ptr->m_remote_credentials.value(remoteName));
+    return std::make_unique<Remote>(r, d_ptr->m_remote_credentials.at(remoteName));
 }
 
 
@@ -509,17 +506,17 @@ void Repository::fetch(const std::string& name, const std::string& head, const s
 {
     git_remote *_remote = NULL;
     qGitThrow(git_remote_lookup(&_remote, SAFE_DATA, name.toLatin1()));
-    Remote remote(_remote, d_ptr->m_remote_credentials.value(name));
+    Remote remote(_remote, d_ptr->m_remote_credentials.at(name));
     connect(&remote, SIGNAL(transferProgress(int)), this, SIGNAL(fetchProgress(int)));
 
     using internal::StrArray;
     StrArray refs;
-    if (!head.isEmpty()) {
+    if (!head.empty()) {
         const std::string refspec = std::string("refs/heads/%2:refs/remotes/%1/%2").arg(name).arg(head);
         refs = StrArray(std::list<QByteArray>() << refspec.toLatin1());
     }
 
-    internal::RemoteCallbacks remoteCallbacks(d_ptr.data(), d_ptr->m_remote_credentials.value(name));
+    internal::RemoteCallbacks remoteCallbacks(d_ptr.get(), d_ptr->m_remote_credentials.at(name));
     git_fetch_options opts = GIT_FETCH_OPTIONS_INIT;
     opts.callbacks = remoteCallbacks.rawCallbacks();
     qGitThrow(git_remote_fetch(remote.data(), refs.count() > 0 ? &refs.data() : NULL, &opts, message.isNull() ? NULL : message.toUtf8().constData()));
@@ -530,9 +527,9 @@ std::stringList Repository::remoteBranches(const std::string& remoteName)
 {
     git_remote *_remote = NULL;
     qGitThrow(git_remote_lookup(&_remote, SAFE_DATA, remoteName.toLatin1()));
-    Remote remote(_remote, d_ptr->m_remote_credentials.value(remoteName));
+    Remote remote(_remote, d_ptr->m_remote_credentials.at(remoteName));
 
-    internal::RemoteCallbacks remoteCallbacks(d_ptr.data(), d_ptr->m_remote_credentials.value(remoteName));
+    internal::RemoteCallbacks remoteCallbacks(d_ptr.get(), d_ptr->m_remote_credentials.at(remoteName));
     const auto callbacks = remoteCallbacks.rawCallbacks();
     qGitThrow(git_remote_connect(remote.data(), GIT_DIRECTION_FETCH, &callbacks, nullptr, nullptr));
     qGitEnsureValue(1, git_remote_connected(remote.data()));
@@ -630,8 +627,8 @@ bool Repository::shouldIgnore(const std::string &path) const
 
 void Repository::setIdentity(const Identity &id)
 {
-    const auto name = !id.name.isEmpty() ? id.name.toUtf8() : QByteArray();
-    const auto email = !id.email.isEmpty() ? id.email.toUtf8() : QByteArray();
+    const auto name = !id.name.empty() ? id.name.toUtf8() : QByteArray();
+    const auto email = !id.email.empty() ? id.email.toUtf8() : QByteArray();
     qGitThrow(git_repository_set_ident(data(), name, email));
 }
 

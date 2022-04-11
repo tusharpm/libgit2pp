@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "git2pp/remotecallbacks.h"
+#include "remotecallbacks.h"
 #include "git2pp/credentials.h"
 #include "git2pp/exception.h"
 #include "private/credentials.h"

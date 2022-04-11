@@ -19,9 +19,6 @@
 
 #include "git2pp/statusentry.h"
 
-#include <QtCore/QDir>
-#include <QtCore/QFile>
-
 #include "git2pp/status.h"
 #include "git2pp/diffdelta.h"
 

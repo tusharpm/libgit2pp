@@ -50,7 +50,7 @@ Object::Type Object::type() const
 {
     Type t = BadType;
     if (!isNull()) {
-        t = resolveType(git_object_type(d.data()));
+        t = resolveType(git_object_type(d.get()));
     }
 
     return t;
@@ -115,7 +115,7 @@ bool Object::isNull() const
 
 OId Object::oid() const
 {
-    return OId(git_object_id(d.data()));
+    return OId(git_object_id(d.get()));
 }
 
 bool Object::isCommit() const
@@ -140,22 +140,22 @@ bool Object::isBlob() const
 
 std::string Object::typeString() const
 {
-    return std::string(git_object_type2string(git_object_type(d.data())));
+    return std::string(git_object_type2string(git_object_type(d.get())));
 }
 
 Repository Object::owner() const
 {
-    return Repository(git_object_owner(d.data()));
+    return Repository(git_object_owner(d.get()));
 }
 
 git_object* Object::data() const
 {
-    return d.data();
+    return d.get();
 }
 
 const git_object* Object::constData() const
 {
-    return d.data();
+    return d.get();
 }
 
 bool operator ==(const Object &o1, const Object &o2)

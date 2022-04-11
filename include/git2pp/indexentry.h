@@ -67,7 +67,7 @@ namespace LibGit2pp
             /**
              * Get the size of the file
              */
-            qint64 fileSize() const;
+            uint32_t fileSize() const;
 
             /**
              * Get the stage of this index entry.

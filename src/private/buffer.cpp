@@ -25,8 +25,7 @@ namespace internal {
 
 Buffer::Buffer()
 {
-    git_buf temp = GIT_BUF_INIT_CONST(0, 0);
-    d = temp;
+    d = GIT_BUF_INIT_CONST(0, 0);
 }
 
 Buffer::~Buffer()

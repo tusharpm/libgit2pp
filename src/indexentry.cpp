@@ -50,7 +50,7 @@ std::string IndexEntry::path() const
     return PathCodec::fromLibGit2(d->path);
 }
 
-qint64 IndexEntry::fileSize() const
+uint32_t IndexEntry::fileSize() const
 {
     return d->file_size;
 }

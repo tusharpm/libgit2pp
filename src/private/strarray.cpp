@@ -17,7 +17,6 @@
  */
 
 #include "strarray.h"
-#include <QtCore/QByteArray>
 
 namespace LibGit2pp {
 namespace internal {
@@ -27,7 +26,7 @@ static_assert(std::is_move_constructible<StrArray>::value, "StrArray must be mov
 static_assert(!std::is_copy_assignable<StrArray>::value, "StrArray must NOT be copy assignable");
 static_assert(std::is_move_assignable<StrArray>::value, "StrArray must be move assignable");
 
-StrArray::StrArray(const std::list<QByteArray> &list) :
+StrArray::StrArray(const std::vector<QByteArray> &list) :
     m_strings(list)
 {
     m_data.count = size_t(m_strings.size());
@@ -38,7 +37,7 @@ StrArray::StrArray(const std::list<QByteArray> &list) :
 
     m_data.strings = new char*[m_data.count];
     for (size_t i = 0; i < m_data.count; ++i) {
-        m_data.strings[i] = const_cast<char*>(m_strings.at(int(i)).data());
+        m_data.strings[i] = const_cast<char*>(m_strings[i]).data());
     }
 }
 

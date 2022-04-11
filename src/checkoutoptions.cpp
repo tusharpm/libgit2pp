@@ -82,10 +82,10 @@ public:
 
     void setPaths(const std::list<std::string> &paths)
     {
-        std::list<QByteArray> pathByteArrays;
+        std::vector<QByteArray> pathByteArrays;
         pathByteArrays.reserve(paths.size());
-        foreach (const std::string &path, paths) {
-            pathByteArrays.append(PathCodec::toLibGit2(path));
+        for (const std::string &path : paths) {
+            pathByteArrays.push_back(PathCodec::toLibGit2(path));
         }
         m_paths = internal::StrArray(pathByteArrays);
 
