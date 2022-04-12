@@ -83,7 +83,7 @@ namespace LibGit2pp
              *
              * @return the short message
              */
-            std::string shortMessage(int maxLen = 80) const;
+            std::string shortMessage(std::size_t maxLen = 80) const;
 
             /**
              * Get the commit time (i.e. committer time) of this commit.

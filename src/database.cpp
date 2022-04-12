@@ -41,7 +41,7 @@ Database::~Database()
 
 int Database::open(const std::string& objectsDir)
 {
-    return git_odb_open(&m_database, PathCodec::toLibGit2(objectsDir));
+    return git_odb_open(&m_database, internal::PathCodec::toLibGit2(objectsDir).data());
 }
 
 void Database::close()

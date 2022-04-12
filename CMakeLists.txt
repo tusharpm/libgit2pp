@@ -29,7 +29,7 @@
 # Install:
 # > cmake --build . --target install
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.11)
 project(libgit2pp)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}")
@@ -101,6 +101,7 @@ message(STATUS)
 # Compile and link libgit2pp
 add_library(git2pp ${SRC} ${GIT2PP_HEADERS} ${GIT2PP_PRIVATE_HEADERS})
 target_compile_definitions(git2pp PRIVATE MAKE_LIBGIT2PP_LIB)
+target_compile_features(git2pp PUBLIC cxx_std_17)
 target_include_directories(git2pp PRIVATE src PUBLIC include)
 target_link_libraries(git2pp ${LIBGIT2_LIBRARIES})
 set_target_properties(git2pp PROPERTIES

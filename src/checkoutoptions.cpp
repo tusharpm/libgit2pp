@@ -77,7 +77,7 @@ public:
     void setTargetDirectory(const std::string &dir)
     {
         m_target_directory = internal::PathCodec::toLibGit2(dir);
-        native.target_directory = m_target_directory.constData();
+        native.target_directory = m_target_directory.data();
     }
 
     void setPaths(const std::list<std::string> &paths)

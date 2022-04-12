@@ -38,6 +38,9 @@ public:
         return data;
     }
 
+    // TODO: replace with operator& instead maybe.
+    bool testFlag(T flag) const { return data & flag; }
+
 private:
     T data;
 };

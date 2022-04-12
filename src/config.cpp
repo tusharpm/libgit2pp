@@ -74,7 +74,7 @@ std::string Config::findSystem()
 
 bool Config::append(const std::string &path, git_config_level_t level, const Repository &repo, bool force)
 {
-    return GIT_OK == git_config_add_file_ondisk(d, PathCodec::toLibGit2(path).constData(), level, repo.constData(), force);
+    return GIT_OK == git_config_add_file_ondisk(d, internal::PathCodec::toLibGit2(path).data(), level, repo.constData(), force);
 }
 
 std::optional<std::string> Config::value(const std::string &key) const
@@ -88,7 +88,7 @@ std::optional<std::string> Config::value(const std::string &key) const
 
 void Config::setValue(const std::string &key, const std::string &value)
 {
-    qGitThrow( git_config_set_string(d, key.c_str(), value.c_str()) );
+    qGitThrow(git_config_set_string(d, key.c_str(), value.c_str()) );
 }
 
 
