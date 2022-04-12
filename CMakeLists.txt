@@ -90,13 +90,12 @@ file(GLOB_RECURSE SRC src/*.cpp)
 file(GLOB_RECURSE GIT2PP_HEADERS include/*.h)
 file(GLOB_RECURSE GIT2PP_PRIVATE_HEADERS src/private/*.h)
 
-message(STATUS)
 message(STATUS "========== LIBGIT2PP Build Information ==========")
 message(STATUS "Build Version: ${LIBGIT2PP_VERSION_STRING}")
 message(STATUS "Install Prefix: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS)
 message(STATUS "To change any of these options, override them using -D{OPTION_NAME} on the commandline.")
-message(STATUS "To build and install LIBGIT2PP, run \"make\" and \"make install\"")
+message(STATUS "To build and install LIBGIT2PP, run \"cmake --build .\" and \"cmake --install .\"")
 message(STATUS)
 
 # Compile and link libgit2pp
@@ -142,9 +141,9 @@ endif()
 # Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+    configure_file(Doxyfile.in Doxyfile @ONLY)
     add_custom_target(doc
-        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        ${DOXYGEN_EXECUTABLE} Doxyfile
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating API documentation with Doxygen" VERBATIM)
 endif(DOXYGEN_FOUND)
