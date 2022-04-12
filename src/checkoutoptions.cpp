@@ -76,7 +76,7 @@ public:
 
     void setTargetDirectory(const std::string &dir)
     {
-        m_target_directory = PathCodec::toLibGit2(dir);
+        m_target_directory = internal::PathCodec::toLibGit2(dir);
         native.target_directory = m_target_directory.constData();
     }
 
@@ -85,7 +85,7 @@ public:
         std::vector<QByteArray> pathByteArrays;
         pathByteArrays.reserve(paths.size());
         for (const std::string &path : paths) {
-            pathByteArrays.push_back(PathCodec::toLibGit2(path));
+            pathByteArrays.push_back(internal::PathCodec::toLibGit2(path));
         }
         m_paths = internal::StrArray(pathByteArrays);
 

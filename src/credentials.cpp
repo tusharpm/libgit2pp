@@ -18,7 +18,6 @@
 
 #include "git2pp/credentials.h"
 #include "private/credentials.h"
-
 #include "private/pathcodec.h"
 
 #include "git2.h"
@@ -54,8 +53,8 @@ int CredentialsPrivate::create(Credentials &credentials, git_cred **cred, const 
 struct SSHCredentialsPrivate : public CredentialsPrivate {
     SSHCredentialsPrivate(const std::string &privateKeyPath, const std::string &publicKeyPath, const QByteArray &userName, const QByteArray &passphrase) :
         CredentialsPrivate(GIT_CREDTYPE_SSH_KEY | GIT_CREDTYPE_USERNAME),
-        m_private_key_path(PathCodec::toLibGit2(privateKeyPath)),
-        m_public_key_path(PathCodec::toLibGit2(publicKeyPath)),
+        m_private_key_path(internal::PathCodec::toLibGit2(privateKeyPath)),
+        m_public_key_path(internal::PathCodec::toLibGit2(publicKeyPath)),
         m_user_name(userName),
         m_passphrase(passphrase)
     {

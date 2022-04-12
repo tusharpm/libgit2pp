@@ -47,7 +47,7 @@ void Index::open(const std::string& indexPath)
 {
     d.clear();
     git_index *index = 0;
-    qGitThrow(git_index_open(&index, PathCodec::toLibGit2(indexPath)));
+    qGitThrow(git_index_open(&index, internal::PathCodec::toLibGit2(indexPath)));
     d = ptr_type(index, git_index_free);
 }
 
@@ -75,17 +75,17 @@ void Index::write()
 
 int Index::find(const std::string& path)
 {
-    return git_index_find(NULL, data(), PathCodec::toLibGit2(path));
+    return git_index_find(NULL, data(), internal::PathCodec::toLibGit2(path));
 }
 
 void Index::addByPath(const std::string& path)
 {
-    qGitThrow(git_index_add_bypath(data(), PathCodec::toLibGit2(path)));
+    qGitThrow(git_index_add_bypath(data(), internal::PathCodec::toLibGit2(path)));
 }
 
 void Index::remove(const std::string& path, int stage)
 {
-    qGitThrow(git_index_remove(data(), PathCodec::toLibGit2(path), stage));
+    qGitThrow(git_index_remove(data(), internal::PathCodec::toLibGit2(path), stage));
 }
 
 void Index::add(const IndexEntry &source_entry)

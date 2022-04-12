@@ -68,7 +68,7 @@ public:
     {
         d.clear();
         git_repository *repo = 0;
-        qGitThrow(git_repository_init(&repo, PathCodec::toLibGit2(path), isBare));
+        qGitThrow(git_repository_init(&repo, internal::PathCodec::toLibGit2(path), isBare));
         setData(repo);
     }
 
@@ -76,7 +76,7 @@ public:
     {
         d.clear();
         git_repository *repo = 0;
-        qGitThrow(git_repository_open(&repo, PathCodec::toLibGit2(path)));
+        qGitThrow(git_repository_open(&repo, internal::PathCodec::toLibGit2(path)));
         setData(repo);
     }
 
@@ -126,8 +126,8 @@ Repository::~Repository()
 std::string Repository::discover(const std::string& startPath, bool acrossFs, const std::stringList& ceilingDirs)
 {
     internal::Buffer repoPath;
-    QByteArray joinedCeilingDirs = PathCodec::toLibGit2(ceilingDirs.join(QChar(GIT_PATH_LIST_SEPARATOR)));
-    qGitThrow(git_repository_discover(repoPath.data(), PathCodec::toLibGit2(startPath), acrossFs, joinedCeilingDirs));
+    QByteArray joinedCeilingDirs = internal::PathCodec::toLibGit2(ceilingDirs.join(QChar(GIT_PATH_LIST_SEPARATOR)));
+    qGitThrow(git_repository_discover(repoPath.data(), internal::PathCodec::toLibGit2(startPath), acrossFs, joinedCeilingDirs));
 
     return repoPath.asPath();
 }
@@ -187,12 +187,12 @@ std::string Repository::name() const
 
 std::string Repository::path() const
 {
-    return PathCodec::fromLibGit2(git_repository_path(SAFE_DATA));
+    return internal::PathCodec::fromLibGit2(git_repository_path(SAFE_DATA));
 }
 
 std::string Repository::workDirPath() const
 {
-    return PathCodec::fromLibGit2(git_repository_workdir(SAFE_DATA));
+    return internal::PathCodec::fromLibGit2(git_repository_workdir(SAFE_DATA));
 }
 
 Config Repository::configuration() const
@@ -205,21 +205,21 @@ Config Repository::configuration() const
 Reference Repository::lookupRef(const std::string& name) const
 {
     git_reference *ref = 0;
-    qGitThrow(git_reference_lookup(&ref, SAFE_DATA, PathCodec::toLibGit2(name)));
+    qGitThrow(git_reference_lookup(&ref, SAFE_DATA, internal::PathCodec::toLibGit2(name)));
     return Reference(ref);
 }
 
 OId Repository::lookupRefOId(const std::string& name) const
 {
     git_oid oid;
-    qGitThrow(git_reference_name_to_id(&oid, SAFE_DATA, PathCodec::toLibGit2(name)));
+    qGitThrow(git_reference_name_to_id(&oid, SAFE_DATA, internal::PathCodec::toLibGit2(name)));
     return OId(&oid);
 }
 
 Reference Repository::lookupShorthandRef(const std::string& shorthand) const
 {
     git_reference *ref = 0;
-    qGitThrow(git_reference_dwim(&ref, SAFE_DATA, PathCodec::toLibGit2(shorthand)));
+    qGitThrow(git_reference_dwim(&ref, SAFE_DATA, internal::PathCodec::toLibGit2(shorthand)));
     return Reference(ref);
 }
 
@@ -268,14 +268,14 @@ Object Repository::lookupRevision(const std::string &revspec) const
 Reference Repository::createRef(const std::string& name, const LibGit2pp::OId& oid, bool overwrite, const std::string &message)
 {
     git_reference *ref = 0;
-    qGitThrow(git_reference_create(&ref, SAFE_DATA, PathCodec::toLibGit2(name), oid.constData(), overwrite, message.toUtf8()));
+    qGitThrow(git_reference_create(&ref, SAFE_DATA, internal::PathCodec::toLibGit2(name), oid.constData(), overwrite, message.toUtf8()));
     return Reference(ref);
 }
 
 Reference Repository::createSymbolicRef(const std::string& name, const std::string& target, bool overwrite, const std::string &message)
 {
     git_reference *ref = 0;
-    qGitThrow(git_reference_symbolic_create(&ref, SAFE_DATA, PathCodec::toLibGit2(name), PathCodec::toLibGit2(target), overwrite, message.toUtf8()));
+    qGitThrow(git_reference_symbolic_create(&ref, SAFE_DATA, internal::PathCodec::toLibGit2(name), internal::PathCodec::toLibGit2(target), overwrite, message.toUtf8()));
     return Reference(ref);
 }
 
@@ -287,7 +287,7 @@ OId Repository::createCommit(const Tree& tree, const std::list<Commit>& parents,
     }
 
     OId oid;
-    qGitThrow(git_commit_create(oid.data(), SAFE_DATA, ref.empty() ? NULL : PathCodec::toLibGit2(ref).constData(), author.data(), committer.data(),
+    qGitThrow(git_commit_create(oid.data(), SAFE_DATA, ref.empty() ? NULL : internal::PathCodec::toLibGit2(ref).constData(), author.data(), committer.data(),
                                 NULL, message.toUtf8(), tree.data(), p.size(), p.data()));
     return oid;
 }
@@ -297,7 +297,7 @@ OId Repository::createTag(const std::string& name,
                                   bool overwrite)
 {
     OId oid;
-    qGitThrow(git_tag_create_lightweight(oid.data(), SAFE_DATA, PathCodec::toLibGit2(name),
+    qGitThrow(git_tag_create_lightweight(oid.data(), SAFE_DATA, internal::PathCodec::toLibGit2(name),
                                          target.data(), overwrite));
     return oid;
 }
@@ -309,20 +309,20 @@ OId Repository::createTag(const std::string& name,
                                   bool overwrite)
 {
     OId oid;
-    qGitThrow(git_tag_create(oid.data(), SAFE_DATA, PathCodec::toLibGit2(name), target.data(),
+    qGitThrow(git_tag_create(oid.data(), SAFE_DATA, internal::PathCodec::toLibGit2(name), target.data(),
                              tagger.data(), message.toUtf8(), overwrite));
     return oid;
 }
 
 void Repository::deleteTag(const std::string& name)
 {
-    qGitThrow(git_tag_delete(SAFE_DATA, PathCodec::toLibGit2(name)));
+    qGitThrow(git_tag_delete(SAFE_DATA, internal::PathCodec::toLibGit2(name)));
 }
 
 OId Repository::createBlobFromFile(const std::string& path)
 {
     OId oid;
-    qGitThrow(git_blob_create_fromdisk(oid.data(), SAFE_DATA, PathCodec::toLibGit2(path)));
+    qGitThrow(git_blob_create_fromdisk(oid.data(), SAFE_DATA, internal::PathCodec::toLibGit2(path)));
     return oid;
 }
 
@@ -462,7 +462,7 @@ void Repository::clone(const std::string& url, const std::string& path)
     git_clone_options opts = GIT_CLONE_OPTIONS_INIT;
     opts.fetch_opts.callbacks = remoteCallbacks.rawCallbacks();
     opts.checkout_opts.checkout_strategy = GIT_CHECKOUT_SAFE;
-    qGitEnsureValue(0, git_clone(&repo, url.toLatin1(), PathCodec::toLibGit2(path), &opts));
+    qGitEnsureValue(0, git_clone(&repo, url.toLatin1(), internal::PathCodec::toLibGit2(path), &opts));
 
     d_ptr->setData(repo);
 }
@@ -621,7 +621,7 @@ bool Repository::shouldIgnore(const std::string &path) const
     }
 
     int result;
-    qGitThrow(git_status_should_ignore(&result, SAFE_DATA, PathCodec::toLibGit2(usedPath)));
+    qGitThrow(git_status_should_ignore(&result, SAFE_DATA, internal::PathCodec::toLibGit2(usedPath)));
     return result;
 }
 

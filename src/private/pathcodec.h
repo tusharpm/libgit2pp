@@ -22,6 +22,10 @@
 #include <string>
 #include "git2pp/libgit2pp_types.h"
 
+namespace LibGit2pp
+{
+namespace internal
+{
 class PathCodec
 {
 public:
@@ -29,5 +33,7 @@ public:
     static std::string fromLibGit2(const QByteArray &path);
     static std::string fromLibGit2(const char *path);
 };
+}
+}
 
 #endif // LIBGIT2PP_PATHCODEC_H

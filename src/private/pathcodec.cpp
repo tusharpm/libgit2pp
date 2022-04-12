@@ -18,6 +18,11 @@
 
 #include "pathcodec.h"
 
+namespace LibGit2pp
+{
+namespace internal
+{
+
 // POSIX emulation in libgit2 assumes all i/o to be UTF-8 encoded
 QByteArray PathCodec::toLibGit2(const std::string &path)
 {
@@ -32,4 +37,7 @@ std::string PathCodec::fromLibGit2(const QByteArray &path)
 std::string PathCodec::fromLibGit2(const char *path)
 {
     return fromLibGit2(QByteArray(path));
+}
+
+}
 }

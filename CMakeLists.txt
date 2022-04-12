@@ -40,14 +40,11 @@ if(WIN32) # Dll's into bin
     set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 endif()
 
-file(STRINGS "include/git2pp.h" GIT2PP_HEADER REGEX "^#define LIBGIT2PP_VERSION \"[^\"]*\"$")
-string(REGEX REPLACE "^.*LIBGIT2PP_VERSION \"([0-9]+).*$" "\\1" LIBGIT2PP_VERSION_MAJOR "${GIT2PP_HEADER}")
-string(REGEX REPLACE "^.*LIBGIT2PP_VERSION \"[0-9]+\\.([0-9]+).*$" "\\1" LIBGIT2PP_VERSION_MINOR  "${GIT2PP_HEADER}")
-string(REGEX REPLACE "^.*LIBGIT2PP_VERSION \"[0-9]+\\.[0-9]+\\.([0-9]+).*$" "\\1" LIBGIT2PP_VERSION_REV "${GIT2PP_HEADER}")
-set(LIBGIT2PP_VERSION_STRING "${LIBGIT2PP_VERSION_MAJOR}.${LIBGIT2PP_VERSION_MINOR}.${LIBGIT2PP_VERSION_REV}")
-
-file(STRINGS "include/git2pp.h" GIT2PP_HEADER_SOVERSION REGEX "^#define LIBGIT2PP_SOVERSION [0-9]+$")
-string(REGEX REPLACE "^.*LIBGIT2PP_SOVERSION ([0-9]+)$" "\\1" LIBGIT2PP_SOVERSION "${GIT2PP_HEADER_SOVERSION}")
+file(STRINGS "include/git2pp.h" GIT2PP_DEFINES REGEX "^#define LIBGIT2PP_[A-Z_]+ [0-9]+$")
+foreach(VAR LIBGIT2PP_VER_MAJOR LIBGIT2PP_VER_MINOR LIBGIT2PP_VER_REVISION LIBGIT2PP_SOVERSION)
+    string(REGEX REPLACE "^.*${VAR} ([0-9]+).*" "\\1" ${VAR} "${GIT2PP_DEFINES}")
+endforeach()
+set(LIBGIT2PP_VERSION_STRING "${LIBGIT2PP_VER_MAJOR}.${LIBGIT2PP_VER_MINOR}.${LIBGIT2PP_VER_REVISION}")
 
 # Installation paths
 set(INSTALL_BIN bin CACHE PATH "Where to install binaries to.")
@@ -65,7 +62,7 @@ endif()
 set(LIBGIT2_SRC_DIR "" CACHE PATH "Build libgit2 source from this directory.")
 option(LIBGIT2_TESTS "Build libgit2 tests" OFF)
 
-if(NOT LIBGIT2_SRC_DIR STREQUAL "")
+if(LIBGIT2_SRC_DIR)
     message(STATUS "Using libgit2 source from ${LIBGIT2_SRC_DIR}")
     if(NOT LIBGIT2_TESTS)
         set(BUILD_CLAR OFF CACHE STRING "libgit2 tests" FORCE)
@@ -88,8 +85,6 @@ Install the libgit2 development files to your system.
 Alternatively define LIBGIT2_SRC_DIR to point to a libgit2 source directory.")
 endif()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src ${LIBGIT2_INCLUDE_DIR})
-
 # Collect files
 file(GLOB_RECURSE SRC src/*.cpp)
 file(GLOB_RECURSE GIT2PP_HEADERS include/*.h)
@@ -107,7 +102,7 @@ message(STATUS)
 # Compile and link libgit2pp
 add_library(git2pp ${SRC} ${GIT2PP_HEADERS} ${GIT2PP_PRIVATE_HEADERS})
 target_compile_definitions(git2pp PRIVATE MAKE_LIBGIT2PP_LIB)
-target_include_directories(git2pp PRIVATE include)
+target_include_directories(git2pp PRIVATE src PUBLIC include)
 target_link_libraries(git2pp ${LIBGIT2_LIBRARIES})
 set_target_properties(git2pp PROPERTIES
     VERSION ${LIBGIT2PP_VERSION_STRING}
@@ -125,10 +120,15 @@ install(TARGETS git2pp
 install(FILES ${GIT2PP_HEADERS} DESTINATION ${INSTALL_INC} COMPONENT Devel)
 
 #Packaging options
-set(CPACK_GENERATOR "DEB;RPM;TGZ")
+if(WIN32)
+    set(CPACK_GENERATOR "NuGet;Zip")
+else()
+    set(CPACK_GENERATOR "DEB;RPM;TGZ")
+endif()
 set(CPACK_PACKAGE_NAME "LIBGIT2PP")
-set(CPACK_PACKAGE_FILE_NAME "LIBGIT2PP-${LIBGIT2PP_VERSION_STRING}")
-set(CPACK_PACKAGE_VERSION "${LIBGIT2PP_VERSION_MAJOR}.${LIBGIT2PP_VERSION_MINOR}.${LIBGIT2PP_VERSION_REV}")
+set(CPACK_PACKAGE_VERSION_MAJOR ${LIBGIT2PP_VER_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${LIBGIT2PP_VER_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${LIBGIT2PP_VER_REVISION})
 set(CPACK_PACKAGE_CONTACT "Tushar Maheshwari <tushar27192@gmail.com>")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libgit2 bindings for C++")
 include(InstallRequiredSystemLibraries)

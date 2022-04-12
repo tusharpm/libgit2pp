@@ -82,7 +82,7 @@ Repository Reference::owner() const
 void Reference::setSymbolicTarget(const std::string& target, const std::string &message)
 {
     git_reference* rp;
-    qGitThrow(git_reference_symbolic_set_target(&rp, data(), PathCodec::toLibGit2(target), message.toUtf8()));
+    qGitThrow(git_reference_symbolic_set_target(&rp, data(), internal::PathCodec::toLibGit2(target), message.toUtf8()));
     d = ptr_type(rp, git_reference_free);
 }
 
