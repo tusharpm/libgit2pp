@@ -287,7 +287,7 @@ OId Repository::createCommit(const Tree& tree, const std::list<Commit>& parents,
     }
 
     OId oid;
-    qGitThrow(git_commit_create(oid.get(), SAFE_DATA, ref.empty() ? NULL : PathCodec::toLibGit2(ref).constData(), author.data(), committer.data(),
+    qGitThrow(git_commit_create(oid.data(), SAFE_DATA, ref.empty() ? NULL : PathCodec::toLibGit2(ref).constData(), author.data(), committer.data(),
                                 NULL, message.toUtf8(), tree.data(), p.size(), p.data()));
     return oid;
 }
@@ -297,7 +297,7 @@ OId Repository::createTag(const std::string& name,
                                   bool overwrite)
 {
     OId oid;
-    qGitThrow(git_tag_create_lightweight(oid.get(), SAFE_DATA, PathCodec::toLibGit2(name),
+    qGitThrow(git_tag_create_lightweight(oid.data(), SAFE_DATA, PathCodec::toLibGit2(name),
                                          target.data(), overwrite));
     return oid;
 }
@@ -309,7 +309,7 @@ OId Repository::createTag(const std::string& name,
                                   bool overwrite)
 {
     OId oid;
-    qGitThrow(git_tag_create(oid.get(), SAFE_DATA, PathCodec::toLibGit2(name), target.data(),
+    qGitThrow(git_tag_create(oid.data(), SAFE_DATA, PathCodec::toLibGit2(name), target.data(),
                              tagger.data(), message.toUtf8(), overwrite));
     return oid;
 }
@@ -322,14 +322,14 @@ void Repository::deleteTag(const std::string& name)
 OId Repository::createBlobFromFile(const std::string& path)
 {
     OId oid;
-    qGitThrow(git_blob_create_fromdisk(oid.get(), SAFE_DATA, PathCodec::toLibGit2(path)));
+    qGitThrow(git_blob_create_fromdisk(oid.data(), SAFE_DATA, PathCodec::toLibGit2(path)));
     return oid;
 }
 
 OId Repository::createBlobFromBuffer(const QByteArray& buffer)
 {
     OId oid;
-    qGitThrow(git_blob_create_frombuffer(oid.get(), SAFE_DATA, buffer.data(), buffer.size()));
+    qGitThrow(git_blob_create_frombuffer(oid.data(), SAFE_DATA, buffer.data(), buffer.size()));
     return oid;
 }
 

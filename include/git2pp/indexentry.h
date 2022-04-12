@@ -21,8 +21,8 @@
 #ifndef LIBGIT2PP_INDEX_ENTRY_H
 #define LIBGIT2PP_INDEX_ENTRY_H
 
+#include <string>
 #include "git2.h"
-
 #include "libgit2pp_config.h"
 
 namespace LibGit2pp
