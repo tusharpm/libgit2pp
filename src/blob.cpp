@@ -46,7 +46,8 @@ const void* Blob::rawContent() const
 
 QByteArray Blob::content() const
 {
-    return QByteArray::fromRawData( static_cast<const char *>(rawContent()), rawSize() );
+    auto begin = static_cast<const char *>(rawContent());
+    return {begin, begin + rawSize()};
 }
 
 int Blob::rawSize() const

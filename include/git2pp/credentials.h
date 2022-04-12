@@ -22,6 +22,7 @@
 #include <memory>
 
 #include "libgit2pp_config.h"
+#include "libgit2pp_types.h"
 
 struct git_cred;
 
@@ -60,11 +61,12 @@ public:
      * @param passphrase the passphrase for the private key
      * @return a new Credentials object
      */
-    static Credentials ssh(const std::string &privateKeyPath, const std::string &publicKeyPath = std::string(), const QByteArray &userName = QByteArray(), const QByteArray &passphrase = QByteArray());
+    static Credentials ssh(const std::string &privateKeyPath, const std::string &publicKeyPath = {}, const QByteArray &userName = {}, const QByteArray &passphrase = {});
 
 private:
     std::shared_ptr<CredentialsPrivate> d_ptr;
     Credentials(CredentialsPrivate &p);
+    friend class CredentialsPrivate;
 };
 
 /** @} */

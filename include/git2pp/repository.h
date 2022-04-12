@@ -21,6 +21,7 @@
 #ifndef LIBGIT2PP_REPOSITORY_H
 #define LIBGIT2PP_REPOSITORY_H
 
+#include <functional>
 #include <list>
 #include <map>
 #include <memory>
@@ -693,9 +694,8 @@ namespace LibGit2pp
             git_repository* data() const;
             const git_repository* constData() const;
 
-        signals:
-            void cloneProgress(int);
-            void fetchProgress(int);
+            std::function<void(int)> cloneProgress;
+            std::function<void(int)> fetchProgress;
 
         private:
             class Private;

@@ -22,6 +22,7 @@
 #define LIBGIT2PP_BLOB_H
 
 #include "object.h"
+#include "libgit2pp_types.h"
 
 namespace LibGit2pp
 {

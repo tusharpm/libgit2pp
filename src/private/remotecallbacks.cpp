@@ -60,7 +60,7 @@ int RemoteCallbacks::transferProgressCallback(const git_transfer_progress* stats
     if (data && stats) {
         RemoteCallbacks* cb = static_cast<RemoteCallbacks*>(data);
 
-        int percent = (int)(0.5 + 100.0 * ((double)stats->received_objects) / ((double)stats->total_objects));
+        int percent = (int)(0.5 + 100.0 * stats->received_objects / stats->total_objects);
         if (percent != cb->m_transferProgress) {
             cb->m_transferProgress = percent;
             ret = cb->m_listener->progress(percent);

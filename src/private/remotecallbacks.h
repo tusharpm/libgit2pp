@@ -35,7 +35,7 @@ public:
     /**
      * Return a value less than 0 for stopping the transfer.
      */
-    virtual int progress(int transferProgress) = 0;
+    virtual int progress(int percent) = 0;
 };
 
 

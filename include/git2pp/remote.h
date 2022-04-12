@@ -19,10 +19,11 @@
 #ifndef LIBGIT2PP_REMOTE_H
 #define LIBGIT2PP_REMOTE_H
 
-#include "libgit2pp_config.h"
-#include "credentials.h"
+#include <functional>
 #include <list>
 #include <memory>
+#include "libgit2pp_config.h"
+#include "credentials.h"
 
 struct git_remote;
 
@@ -58,8 +59,7 @@ public:
 
     git_remote* data() const;
 
-signals:
-    void transferProgress(int);
+    std::function<void(int)> transferProgress;
 
 private:
     // Q_DISABLE_COPY(Remote)

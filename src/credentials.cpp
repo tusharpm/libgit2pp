@@ -39,7 +39,7 @@ int CredentialsPrivate::create(git_cred**, const char*, const char*, unsigned in
 
 int CredentialsPrivate::create(Credentials &credentials, git_cred **cred, const char *url, const char *usernameFromUrl, unsigned int allowedTypes)
 {
-    CredentialsPrivate *d = credentials.d_func();
+    auto d = credentials.d_ptr;
 
     int result = -1;
     if ((allowedTypes & d->m_allowed_types)) {

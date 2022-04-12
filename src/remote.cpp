@@ -34,9 +34,9 @@ struct Remote::Private : public internal::RemoteListener
     {
     }
 
-    int progress(int transferProgress)
+    int progress(int percent)
     {
-        emit m_parent.transferProgress(transferProgress);
+        m_parent.transferProgress(percent);
         return 0;
     }
 

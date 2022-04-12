@@ -92,9 +92,9 @@ public:
         return d.get();
     }
 
-    int progress(int transferProgress)
+    int progress(int percent)
     {
-        emit m_owner.cloneProgress(transferProgress);
+        m_owner.cloneProgress(percent);
         return 0;
     }
 };
@@ -507,7 +507,7 @@ void Repository::fetch(const std::string& name, const std::string& head, const s
     git_remote *_remote = NULL;
     qGitThrow(git_remote_lookup(&_remote, SAFE_DATA, name.toLatin1()));
     Remote remote(_remote, d_ptr->m_remote_credentials.at(name));
-    connect(&remote, SIGNAL(transferProgress(int)), this, SIGNAL(fetchProgress(int)));
+    remote.transferProgress = this.fetchProgress;
 
     using internal::StrArray;
     StrArray refs;

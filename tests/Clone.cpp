@@ -39,7 +39,6 @@ class TestClone : public TestBase
 public:
     TestClone();
 
-public slots:
     void cloneProgress(int p) 
     { 
         m_clone_progress = p;
@@ -71,7 +70,7 @@ void TestClone::clone(const std::string& url, const Credentials &credentials)
 {
     Repository repo;
     repo.setRemoteCredentials("origin", credentials);
-    connect(&repo, SIGNAL(cloneProgress(int)), this, SLOT(cloneProgress(int)));
+    repo.cloneProgress = [this](int percent){ this->cloneProgress(percent); };
 
     std::string dirname = url;
     dirname.replace(":", "");
