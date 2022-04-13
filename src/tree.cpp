@@ -24,8 +24,6 @@
 #include "git2pp/repository.h"
 #include "git2pp/oid.h"
 
-#include "private/pathcodec.h"
-
 namespace LibGit2pp
 {
 
@@ -55,7 +53,7 @@ size_t Tree::entryCount()
 
 TreeEntry Tree::entryByName(const std::string& fileName) const
 {
-    return TreeEntry(git_tree_entry_byname(constData(), PathCodec::toLibGit2(fileName)));
+    return TreeEntry(git_tree_entry_byname(constData(), fileName.c_str()));
 }
 
 TreeEntry Tree::entryByIndex(int idx) const

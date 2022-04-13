@@ -17,7 +17,6 @@
  */
 
 #include "remotecallbacks.h"
-#include "git2pp/credentials.h"
 #include "git2pp/exception.h"
 #include "private/credentials.h"
 

@@ -18,6 +18,7 @@
 
 #include "git2pp/remote.h"
 #include "git2pp/exception.h"
+#include "private/pathcodec.h"
 #include "private/remotecallbacks.h"
 #include "private/strarray.h"
 
@@ -42,9 +43,9 @@ struct Remote::Private : public internal::RemoteListener
 
     void push(const std::list<std::string> &refSpecs)
     {
-        std::list<QByteArray> baRefSpecs;
+        std::vector<QByteArray> baRefSpecs;
         for (const std::string &ref : refSpecs) {
-            baRefSpecs.append(ref.toLatin1());
+            baRefSpecs.push_back(internal::PathCodec::toLibGit2(ref));
         }
         internal::StrArray refspecs(baRefSpecs);
 
@@ -68,7 +69,7 @@ Remote::Remote(git_remote *remote, const Credentials &credentials) :
 
 std::string Remote::url() const
 {
-    return std::string::fromLatin1(git_remote_url(data()));
+    return git_remote_url(data());
 }
 
 void Remote::push(const std::list<std::string> &refSpecs)

@@ -49,7 +49,7 @@ OId Reference::target() const
 
 std::string Reference::symbolicTarget() const
 {
-    return std::string::fromUtf8(git_reference_symbolic_target(d.get()));
+    return git_reference_symbolic_target(d.get());
 }
 
 bool Reference::isDirect() const
@@ -82,14 +82,14 @@ Repository Reference::owner() const
 void Reference::setSymbolicTarget(const std::string& target, const std::string &message)
 {
     git_reference* rp;
-    qGitThrow(git_reference_symbolic_set_target(&rp, data(), internal::PathCodec::toLibGit2(target), message.toUtf8()));
+    qGitThrow(git_reference_symbolic_set_target(&rp, data(), target.c_str(), message.c_str()));
     d = ptr_type(rp, git_reference_free);
 }
 
 void Reference::setTarget(const OId& oid, const std::string &message)
 {
     git_reference* rp;
-    qGitThrow(git_reference_set_target(&rp, data(), oid.constData(), message.toUtf8()));
+    qGitThrow(git_reference_set_target(&rp, data(), oid.constData(), message.c_str()));
     d = ptr_type(rp, git_reference_free);
 }
 

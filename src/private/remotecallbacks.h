@@ -19,7 +19,7 @@
 #ifndef LIBGIT2PP_REMOTECALLBACKS_H
 #define LIBGIT2PP_REMOTECALLBACKS_H
 
-#include "credentials.h"
+#include "git2pp/credentials.h"
 #include "git2.h"
 
 namespace LibGit2pp

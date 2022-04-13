@@ -74,11 +74,10 @@ std::string Signature::email() const
 
 ZonedTime Signature::when() const
 {
-    ZonedTime dt{};
     if (d_ptr->signature) {
-        dt = d_ptr->signature.when;
+        return {d_ptr->signature->when}; 
     }
-    return dt;
+    return {};
 }
 
 const git_signature *Signature::data() const

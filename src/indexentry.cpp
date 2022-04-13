@@ -47,7 +47,7 @@ OId IndexEntry::id() const
 
 std::string IndexEntry::path() const
 {
-    return internal::PathCodec::fromLibGit2(d->path);
+    return d->path;
 }
 
 uint32_t IndexEntry::fileSize() const

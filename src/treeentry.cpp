@@ -22,8 +22,6 @@
 #include "git2pp/repository.h"
 #include "git2pp/exception.h"
 
-#include "private/pathcodec.h"
-
 namespace LibGit2pp
 {
 
@@ -53,7 +51,7 @@ unsigned int TreeEntry::attributes() const
 
 const std::string TreeEntry::name() const
 {
-    return PathCodec::fromLibGit2(git_tree_entry_name(d));
+    return git_tree_entry_name(d);
 }
 
 OId TreeEntry::oid() const

@@ -52,7 +52,7 @@ bool OId::isValid() const
 
 void OId::fromHex(const std::string& hex)
 {
-    int len = std::min(hex.size(), GIT_OID_HEXSZ);
+    int len = std::min(hex.size(), std::size_t(GIT_OID_HEXSZ));
     qGitThrow(git_oid_fromstrn(data(), hex.data(), len));
     d.resize(len / 2);
 }
@@ -104,7 +104,7 @@ git_oid* OId::data()
 
 const git_oid* OId::constData() const
 {
-    return reinterpret_cast<const git_oid*>(d.constData());
+    return reinterpret_cast<const git_oid*>(d.data());
 }
 
 bool operator ==(const OId &oid1, const OId &oid2)

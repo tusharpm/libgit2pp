@@ -28,7 +28,7 @@ DiffFile::DiffFile(const git_diff_file *diff) : m_diff_file(diff)
 
 std::string DiffFile::path() const
 {
-    return internal::PathCodec::fromLibGit2(m_diff_file != NULL ? m_diff_file->path : "");
+    return m_diff_file ? m_diff_file->path : "";
 }
 
 }

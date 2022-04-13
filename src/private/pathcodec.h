@@ -31,7 +31,6 @@ class PathCodec
 public:
     static QByteArray toLibGit2(const std::string &path);
     static std::string fromLibGit2(const QByteArray &path);
-    static std::string fromLibGit2(const char *path);
 };
 }
 }

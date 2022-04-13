@@ -35,7 +35,7 @@ Buffer::~Buffer()
 
 std::string Buffer::asPath() const
 {
-    return PathCodec::fromLibGit2(d.ptr);
+    return d.ptr;
 }
 
 git_buf* Buffer::data()

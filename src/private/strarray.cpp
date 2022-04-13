@@ -37,7 +37,7 @@ StrArray::StrArray(const std::vector<QByteArray> &list) :
 
     m_data.strings = new char*[m_data.count];
     for (size_t i = 0; i < m_data.count; ++i) {
-        m_data.strings[i] = const_cast<char*>(m_strings[i]).data());
+        m_data.strings[i] = m_strings[i].data();
     }
 }
 

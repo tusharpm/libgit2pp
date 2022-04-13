@@ -66,17 +66,17 @@ public:
 
     void init(const std::string& path, bool isBare)
     {
-        d.clear();
+        d.reset();
         git_repository *repo = 0;
-        qGitThrow(git_repository_init(&repo, internal::PathCodec::toLibGit2(path), isBare));
+        qGitThrow(git_repository_init(&repo, path.c_str(), isBare));
         setData(repo);
     }
 
     void open(const std::string& path)
     {
-        d.clear();
+        d.reset();
         git_repository *repo = 0;
-        qGitThrow(git_repository_open(&repo, internal::PathCodec::toLibGit2(path)));
+        qGitThrow(git_repository_open(&repo, path.c_str()));
         setData(repo);
     }
 
@@ -123,11 +123,11 @@ Repository::~Repository()
 {
 }
 
-std::string Repository::discover(const std::string& startPath, bool acrossFs, const std::stringList& ceilingDirs)
+std::string Repository::discover(const std::string& startPath, bool acrossFs, const std::list<std::string>& ceilingDirs)
 {
     internal::Buffer repoPath;
     QByteArray joinedCeilingDirs = internal::PathCodec::toLibGit2(ceilingDirs.join(QChar(GIT_PATH_LIST_SEPARATOR)));
-    qGitThrow(git_repository_discover(repoPath.data(), internal::PathCodec::toLibGit2(startPath), acrossFs, joinedCeilingDirs));
+    qGitThrow(git_repository_discover(repoPath.data(), startPath.c_str(), acrossFs, joinedCeilingDirs));
 
     return repoPath.asPath();
 }
@@ -142,9 +142,8 @@ void Repository::open(const std::string& path)
     d_ptr->open(path);
 }
 
-void Repository::discoverAndOpen(const std::string &startPath,
-                                     bool acrossFs,
-                                     const std::stringList &ceilingDirs)
+void Repository::discoverAndOpen(const std::string &startPath, bool acrossFs,
+                                 const std::list<std::string> &ceilingDirs)
 {
     open(discover(startPath, acrossFs, ceilingDirs));
 }
@@ -166,7 +165,7 @@ bool Repository::isHeadUnborn() const
     return qGitThrow(git_repository_head_unborn(SAFE_DATA)) == 1;
 }
 
-bool Repository::empty() const
+bool Repository::isEmpty() const
 {
     return qGitThrow(git_repository_is_empty(SAFE_DATA)) == 1;
 }
@@ -187,12 +186,12 @@ std::string Repository::name() const
 
 std::string Repository::path() const
 {
-    return internal::PathCodec::fromLibGit2(git_repository_path(SAFE_DATA));
+    return git_repository_path(SAFE_DATA);
 }
 
 std::string Repository::workDirPath() const
 {
-    return internal::PathCodec::fromLibGit2(git_repository_workdir(SAFE_DATA));
+    return git_repository_workdir(SAFE_DATA);
 }
 
 Config Repository::configuration() const
@@ -205,21 +204,21 @@ Config Repository::configuration() const
 Reference Repository::lookupRef(const std::string& name) const
 {
     git_reference *ref = 0;
-    qGitThrow(git_reference_lookup(&ref, SAFE_DATA, internal::PathCodec::toLibGit2(name)));
+    qGitThrow(git_reference_lookup(&ref, SAFE_DATA, name.c_str()));
     return Reference(ref);
 }
 
 OId Repository::lookupRefOId(const std::string& name) const
 {
     git_oid oid;
-    qGitThrow(git_reference_name_to_id(&oid, SAFE_DATA, internal::PathCodec::toLibGit2(name)));
+    qGitThrow(git_reference_name_to_id(&oid, SAFE_DATA, name.c_str()));
     return OId(&oid);
 }
 
 Reference Repository::lookupShorthandRef(const std::string& shorthand) const
 {
     git_reference *ref = 0;
-    qGitThrow(git_reference_dwim(&ref, SAFE_DATA, internal::PathCodec::toLibGit2(shorthand)));
+    qGitThrow(git_reference_dwim(&ref, SAFE_DATA, shorthand.c_str()));
     return Reference(ref);
 }
 
@@ -261,21 +260,21 @@ Object Repository::lookupAny(const OId &oid) const
 Object Repository::lookupRevision(const std::string &revspec) const
 {
     git_object *object = 0;
-    qGitThrow(git_revparse_single(&object, SAFE_DATA, revspec.toLatin1()));
+    qGitThrow(git_revparse_single(&object, SAFE_DATA, revspec.c_str()));
     return Object(object);
 }
 
 Reference Repository::createRef(const std::string& name, const LibGit2pp::OId& oid, bool overwrite, const std::string &message)
 {
     git_reference *ref = 0;
-    qGitThrow(git_reference_create(&ref, SAFE_DATA, internal::PathCodec::toLibGit2(name), oid.constData(), overwrite, message.toUtf8()));
+    qGitThrow(git_reference_create(&ref, SAFE_DATA, name.c_str(), oid.constData(), overwrite, message.c_str()));
     return Reference(ref);
 }
 
 Reference Repository::createSymbolicRef(const std::string& name, const std::string& target, bool overwrite, const std::string &message)
 {
     git_reference *ref = 0;
-    qGitThrow(git_reference_symbolic_create(&ref, SAFE_DATA, internal::PathCodec::toLibGit2(name), internal::PathCodec::toLibGit2(target), overwrite, message.toUtf8()));
+    qGitThrow(git_reference_symbolic_create(&ref, SAFE_DATA, name.c_str(), target.c_str(), overwrite, message.c_str()));
     return Reference(ref);
 }
 
@@ -287,8 +286,8 @@ OId Repository::createCommit(const Tree& tree, const std::list<Commit>& parents,
     }
 
     OId oid;
-    qGitThrow(git_commit_create(oid.data(), SAFE_DATA, ref.empty() ? NULL : internal::PathCodec::toLibGit2(ref).constData(), author.data(), committer.data(),
-                                NULL, message.toUtf8(), tree.data(), p.size(), p.data()));
+    qGitThrow(git_commit_create(oid.data(), SAFE_DATA, ref.empty() ? NULL : ref.c_str(), author.data(), committer.data(),
+                                NULL, message.c_str(), tree.data(), p.size(), p.data()));
     return oid;
 }
 
@@ -297,7 +296,7 @@ OId Repository::createTag(const std::string& name,
                                   bool overwrite)
 {
     OId oid;
-    qGitThrow(git_tag_create_lightweight(oid.data(), SAFE_DATA, internal::PathCodec::toLibGit2(name),
+    qGitThrow(git_tag_create_lightweight(oid.data(), SAFE_DATA, name.c_str(),
                                          target.data(), overwrite));
     return oid;
 }
@@ -309,20 +308,20 @@ OId Repository::createTag(const std::string& name,
                                   bool overwrite)
 {
     OId oid;
-    qGitThrow(git_tag_create(oid.data(), SAFE_DATA, internal::PathCodec::toLibGit2(name), target.data(),
-                             tagger.data(), message.toUtf8(), overwrite));
+    qGitThrow(git_tag_create(oid.data(), SAFE_DATA, name.c_str(), target.data(),
+                             tagger.data(), message.c_str(), overwrite));
     return oid;
 }
 
 void Repository::deleteTag(const std::string& name)
 {
-    qGitThrow(git_tag_delete(SAFE_DATA, internal::PathCodec::toLibGit2(name)));
+    qGitThrow(git_tag_delete(SAFE_DATA, name.c_str()));
 }
 
 OId Repository::createBlobFromFile(const std::string& path)
 {
     OId oid;
-    qGitThrow(git_blob_create_fromdisk(oid.data(), SAFE_DATA, internal::PathCodec::toLibGit2(path)));
+    qGitThrow(git_blob_create_fromdisk(oid.data(), SAFE_DATA, path.c_str()));
     return oid;
 }
 
@@ -341,7 +340,7 @@ Reference Repository::createBranch(const std::string &branchName, const Commit &
     }
 
     git_reference *ref = NULL;
-    qGitThrow(git_branch_create(&ref, SAFE_DATA, branchName.toUtf8(), usedTarget.data(), force));
+    qGitThrow(git_branch_create(&ref, SAFE_DATA, branchName.c_str(), usedTarget.data(), force));
     return Reference(ref);
 }
 
@@ -358,27 +357,27 @@ void Repository::cherryPick(const Commit &commit, const CherryPickOptions &opts)
     qGitThrow(git_cherrypick(SAFE_DATA, commit.data(), opts.data()));
 }
 
-std::stringList Repository::listTags(const std::string& pattern) const
+std::list<std::string> Repository::listTags(const std::string& pattern) const
 {
     git_strarray tags;
     qGitThrow(git_tag_list_match(&tags, qPrintable(pattern), SAFE_DATA));
-    std::stringList list;
+    std::list<std::string> list;
     for (size_t i = 0; i < tags.count; ++i)
     {
-        list << std::string(tags.strings[i]);
+        list.push_back(tags.strings[i]);
     }
     git_strarray_free(&tags);
     return list;
 }
 
-std::stringList Repository::listReferences() const
+std::list<std::string> Repository::listReferences() const
 {
     git_strarray refs;
     qGitThrow(git_reference_list(&refs, SAFE_DATA));
-    std::stringList list;
+    std::list<std::string> list;
     for (size_t i = 0; i < refs.count; ++i)
     {
-        list << std::string(refs.strings[i]);
+        list.push_back(refs.strings[i]);
     }
     git_strarray_free(&refs);
     return list;
@@ -462,7 +461,7 @@ void Repository::clone(const std::string& url, const std::string& path)
     git_clone_options opts = GIT_CLONE_OPTIONS_INIT;
     opts.fetch_opts.callbacks = remoteCallbacks.rawCallbacks();
     opts.checkout_opts.checkout_strategy = GIT_CHECKOUT_SAFE;
-    qGitEnsureValue(0, git_clone(&repo, url.toLatin1(), internal::PathCodec::toLibGit2(path), &opts));
+    qGitEnsureValue(0, git_clone(&repo, url.c_str(), internal::PathCodec::toLibGit2(path).data(), &opts));
 
     d_ptr->setData(repo);
 }
@@ -471,16 +470,16 @@ void Repository::clone(const std::string& url, const std::string& path)
 void Repository::remoteAdd(const std::string& name, const std::string& url, bool changeUrlIfExists)
 {
     git_remote *r = NULL;
-    switch (git_remote_lookup(&r, SAFE_DATA, name.toLatin1())) {
+    switch (git_remote_lookup(&r, SAFE_DATA, name.c_str())) {
     case GIT_ENOTFOUND:
         r = NULL;
-        qGitThrow(git_remote_create(&r, SAFE_DATA, name.toLatin1(), url.toLatin1()));
+        qGitThrow(git_remote_create(&r, SAFE_DATA, name.c_str(), url.c_str()));
         break;
 
     case GIT_OK:
-        if (std::string::fromLatin1(git_remote_url(r)) != url) {
+        if (git_remote_url(r) != url) {
             if (changeUrlIfExists) {
-                qGitThrow(git_remote_set_url(SAFE_DATA, name.toLatin1(), url.toLatin1()));
+                qGitThrow(git_remote_set_url(SAFE_DATA, name.c_str(), url.c_str()));
             } else {
                 THROW("remote already exists");
             }
@@ -497,7 +496,7 @@ void Repository::remoteAdd(const std::string& name, const std::string& url, bool
 std::unique_ptr<Remote> Repository::remote(const std::string &remoteName) const
 {
     git_remote *r = NULL;
-    qGitThrow(git_remote_lookup(&r, SAFE_DATA, remoteName.toLatin1()));
+    qGitThrow(git_remote_lookup(&r, SAFE_DATA, remoteName.c_str()));
     return std::make_unique<Remote>(r, d_ptr->m_remote_credentials.at(remoteName));
 }
 
@@ -505,28 +504,29 @@ std::unique_ptr<Remote> Repository::remote(const std::string &remoteName) const
 void Repository::fetch(const std::string& name, const std::string& head, const std::string &message)
 {
     git_remote *_remote = NULL;
-    qGitThrow(git_remote_lookup(&_remote, SAFE_DATA, name.toLatin1()));
+    qGitThrow(git_remote_lookup(&_remote, SAFE_DATA, name.c_str()));
     Remote remote(_remote, d_ptr->m_remote_credentials.at(name));
-    remote.transferProgress = this.fetchProgress;
+    remote.transferProgress = fetchProgress;
 
     using internal::StrArray;
     StrArray refs;
     if (!head.empty()) {
-        const std::string refspec = std::string("refs/heads/%2:refs/remotes/%1/%2").arg(name).arg(head);
-        refs = StrArray(std::list<QByteArray>() << refspec.toLatin1());
+        const std::string refspec = "refs/heads/" + head + ":refs/remotes/" + name + '/' + head;
+        std::vector<QByteArray> refspecs{internal::PathCodec::toLibGit2(refspec)};
+        refs = StrArray(refspecs);
     }
 
     internal::RemoteCallbacks remoteCallbacks(d_ptr.get(), d_ptr->m_remote_credentials.at(name));
     git_fetch_options opts = GIT_FETCH_OPTIONS_INIT;
     opts.callbacks = remoteCallbacks.rawCallbacks();
-    qGitThrow(git_remote_fetch(remote.data(), refs.count() > 0 ? &refs.data() : NULL, &opts, message.isNull() ? NULL : message.toUtf8().constData()));
+    qGitThrow(git_remote_fetch(remote.data(), refs.count() > 0 ? &refs.data() : NULL, &opts, message.empty() ? NULL : message.c_str()));
 }
 
 
-std::stringList Repository::remoteBranches(const std::string& remoteName)
+std::list<std::string> Repository::remoteBranches(const std::string& remoteName)
 {
     git_remote *_remote = NULL;
-    qGitThrow(git_remote_lookup(&_remote, SAFE_DATA, remoteName.toLatin1()));
+    qGitThrow(git_remote_lookup(&_remote, SAFE_DATA, remoteName.c_str()));
     Remote remote(_remote, d_ptr->m_remote_credentials.at(remoteName));
 
     internal::RemoteCallbacks remoteCallbacks(d_ptr.get(), d_ptr->m_remote_credentials.at(remoteName));
@@ -538,13 +538,14 @@ std::stringList Repository::remoteBranches(const std::string& remoteName)
     const git_remote_head** remote_heads = NULL;
     size_t count = 0;
     qGitThrow(git_remote_ls(&remote_heads, &count, remote.data()));
-    std::stringList heads;
+    std::list<std::string> heads;
     for (size_t i = 0; i < count; ++i) {
         const git_remote_head* head = remote_heads[i];
         if (head && head->name) {
-            std::string ref = std::string::fromLatin1(head->name);
-            if (ref.startsWith("refs/heads/")) {
-                heads << ref.replace("refs/heads/", "");
+            std::string ref = head->name;
+            std::string_view prefix = "refs/heads/";
+            if (ref.starts_with(prefix)) {
+                heads.push_back(ref.substr(prefix.length()));
             }
         }
     }
@@ -570,7 +571,7 @@ void Repository::checkoutRemote(const std::string& branch, const CheckoutOptions
     const std::string refspec = "refs/remotes/" + remote + "/" + branch;
     checkoutTree(lookupRevision(refspec), opts);
 
-    qGitThrow(git_repository_set_head(SAFE_DATA, refspec.toLatin1()));
+    qGitThrow(git_repository_set_head(SAFE_DATA, refspec.c_str()));
 }
 
 
@@ -613,22 +614,22 @@ bool Repository::shouldIgnore(const std::string &path) const
     QFileInfo pathInfo(usedPath);
     if (pathInfo.isAbsolute()) {
         std::string wd(workDirPath());
-        if (usedPath.startsWith(wd)) {
-            usedPath = usedPath.mid(wd.size());
+        if (usedPath.starts_with(wd)) {
+            usedPath = usedPath.substr(wd.size());
         } else {
             THROW("Given path (" + path + ") is not within this repository's directory (" + wd + ").");
         }
     }
 
     int result;
-    qGitThrow(git_status_should_ignore(&result, SAFE_DATA, internal::PathCodec::toLibGit2(usedPath)));
+    qGitThrow(git_status_should_ignore(&result, SAFE_DATA, usedPath.c_str()));
     return result;
 }
 
 void Repository::setIdentity(const Identity &id)
 {
-    const auto name = !id.name.empty() ? id.name.toUtf8() : QByteArray();
-    const auto email = !id.email.empty() ? id.email.toUtf8() : QByteArray();
+    const auto name = id.name.empty() ? nullptr : id.name.c_str();
+    const auto email = id.email.empty() ? nullptr : id.email.c_str();
     qGitThrow(git_repository_set_ident(data(), name, email));
 }
 
@@ -637,7 +638,7 @@ Repository::Identity Repository::identity() const
     const char *name;
     const char *email;
     qGitThrow(git_repository_ident(&name, &email, data()));
-    return Identity{ std::string::fromUtf8(name), std::string::fromUtf8(email) };
+    return { name, email };
 }
 
 } // namespace LibGit2pp

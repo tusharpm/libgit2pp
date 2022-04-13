@@ -34,10 +34,5 @@ std::string PathCodec::fromLibGit2(const QByteArray &path)
     return path.data();
 }
 
-std::string PathCodec::fromLibGit2(const char *path)
-{
-    return fromLibGit2(QByteArray(path));
-}
-
 }
 }
