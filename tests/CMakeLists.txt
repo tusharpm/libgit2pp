@@ -21,9 +21,17 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
 
+set(DOCTEST_DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR})
+file(DOWNLOAD
+    https://raw.githubusercontent.com/onqtam/doctest/v2.4.8/doctest/doctest.h
+    ${DOCTEST_DOWNLOAD_DIR}/doctest.h
+    EXPECTED_HASH SHA1=a1ff6eef4f235bca313c1fc5d0bc86126f2ed79a
+)
+
 macro(addTest name)
     set(testname test${name})
     add_executable(${testname} ${name}.cpp TestHelpers.h TestHelpers.cpp)
+    target_include_directories(${testname} PRIVATE ${DOCTEST_DOWNLOAD_DIR})
     target_link_libraries(${testname} git2pp git2)
     add_test(NAME ${testname} COMMAND ${testname})
 endmacro()

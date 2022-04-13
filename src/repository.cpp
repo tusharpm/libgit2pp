@@ -30,9 +30,11 @@
 #include "git2pp/diff.h"
 #include "private/annotatedcommit.h"
 #include "private/buffer.h"
+#include "private/helpers.h"
 #include "private/pathcodec.h"
 #include "private/remotecallbacks.h"
 #include "private/strarray.h"
+#include <filesystem>
 #include <map>
 
 namespace {
@@ -123,11 +125,12 @@ Repository::~Repository()
 {
 }
 
-std::string Repository::discover(const std::string& startPath, bool acrossFs, const std::list<std::string>& ceilingDirs)
+std::string Repository::discover(const std::string& startPath, bool acrossFs, const std::vector<std::string>& ceilingDirs)
 {
     internal::Buffer repoPath;
-    QByteArray joinedCeilingDirs = internal::PathCodec::toLibGit2(ceilingDirs.join(QChar(GIT_PATH_LIST_SEPARATOR)));
-    qGitThrow(git_repository_discover(repoPath.data(), startPath.c_str(), acrossFs, joinedCeilingDirs));
+    std::string delimiter{1, GIT_PATH_LIST_SEPARATOR};
+    auto joinedCeilingDirs = join(ceilingDirs, delimiter);
+    qGitThrow(git_repository_discover(repoPath.data(), startPath.c_str(), acrossFs, joinedCeilingDirs.c_str()));
 
     return repoPath.asPath();
 }
@@ -143,7 +146,7 @@ void Repository::open(const std::string& path)
 }
 
 void Repository::discoverAndOpen(const std::string &startPath, bool acrossFs,
-                                 const std::list<std::string> &ceilingDirs)
+                                 const std::vector<std::string> &ceilingDirs)
 {
     open(discover(startPath, acrossFs, ceilingDirs));
 }
@@ -177,11 +180,11 @@ bool Repository::isBare() const
 
 std::string Repository::name() const
 {
-    std::string repoPath = QDir::cleanPath( workDirPath() );
+    auto repoPath = std::filesystem::path{workDirPath()}.lexically_normal();
     if (isBare())
-        repoPath = QDir::cleanPath( path() );
+        repoPath = std::filesystem::path{path()}.lexically_normal();
 
-    return QFileInfo(repoPath).fileName();
+    return repoPath.filename();
 }
 
 std::string Repository::path() const
@@ -357,11 +360,11 @@ void Repository::cherryPick(const Commit &commit, const CherryPickOptions &opts)
     qGitThrow(git_cherrypick(SAFE_DATA, commit.data(), opts.data()));
 }
 
-std::list<std::string> Repository::listTags(const std::string& pattern) const
+std::vector<std::string> Repository::listTags(const std::string& pattern) const
 {
     git_strarray tags;
-    qGitThrow(git_tag_list_match(&tags, qPrintable(pattern), SAFE_DATA));
-    std::list<std::string> list;
+    qGitThrow(git_tag_list_match(&tags, pattern.c_str(), SAFE_DATA));
+    std::vector<std::string> list;
     for (size_t i = 0; i < tags.count; ++i)
     {
         list.push_back(tags.strings[i]);
@@ -370,11 +373,11 @@ std::list<std::string> Repository::listTags(const std::string& pattern) const
     return list;
 }
 
-std::list<std::string> Repository::listReferences() const
+std::vector<std::string> Repository::listReferences() const
 {
     git_strarray refs;
     qGitThrow(git_reference_list(&refs, SAFE_DATA));
-    std::list<std::string> list;
+    std::vector<std::string> list;
     for (size_t i = 0; i < refs.count; ++i)
     {
         list.push_back(refs.strings[i]);
@@ -523,7 +526,7 @@ void Repository::fetch(const std::string& name, const std::string& head, const s
 }
 
 
-std::list<std::string> Repository::remoteBranches(const std::string& remoteName)
+std::vector<std::string> Repository::remoteBranches(const std::string& remoteName)
 {
     git_remote *_remote = NULL;
     qGitThrow(git_remote_lookup(&_remote, SAFE_DATA, remoteName.c_str()));
@@ -538,13 +541,13 @@ std::list<std::string> Repository::remoteBranches(const std::string& remoteName)
     const git_remote_head** remote_heads = NULL;
     size_t count = 0;
     qGitThrow(git_remote_ls(&remote_heads, &count, remote.data()));
-    std::list<std::string> heads;
+    std::vector<std::string> heads;
     for (size_t i = 0; i < count; ++i) {
         const git_remote_head* head = remote_heads[i];
         if (head && head->name) {
             std::string ref = head->name;
             std::string_view prefix = "refs/heads/";
-            if (ref.starts_with(prefix)) {
+            if (starts_with(ref, prefix)) {
                 heads.push_back(ref.substr(prefix.length()));
             }
         }
@@ -609,13 +612,11 @@ Rebase Repository::rebase(const Reference &branch, const Reference &upstream, co
 
 bool Repository::shouldIgnore(const std::string &path) const
 {
-    std::string usedPath(QDir::cleanPath(path));
-
-    QFileInfo pathInfo(usedPath);
-    if (pathInfo.isAbsolute()) {
+    auto usedPath = std::filesystem::path{path}.lexically_normal();
+    if (usedPath.is_absolute()) {
         std::string wd(workDirPath());
-        if (usedPath.starts_with(wd)) {
-            usedPath = usedPath.substr(wd.size());
+        if (starts_with(usedPath.string(), wd)) {
+            usedPath = usedPath.string().substr(wd.size());
         } else {
             THROW("Given path (" + path + ") is not within this repository's directory (" + wd + ").");
         }

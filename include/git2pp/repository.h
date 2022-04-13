@@ -26,6 +26,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "libgit2pp_config.h"
 
@@ -117,7 +118,7 @@ namespace LibGit2pp
              */
             static std::string discover(const std::string& startPath,
                                     bool acrossFs = false,
-                                    const std::list<std::string>& ceilingDirs = {});
+                                    const std::vector<std::string>& ceilingDirs = {});
 
             /**
              * Constructs a new Git repository in the given folder.
@@ -164,7 +165,7 @@ namespace LibGit2pp
              */
             void discoverAndOpen(const std::string &startPath,
                                  bool acrossFs = false,
-                                 const std::list<std::string> &ceilingDirs = {});
+                                 const std::vector<std::string> &ceilingDirs = {});
 
             /**
              * Retrieve and resolve the reference pointed at by HEAD.
@@ -347,7 +348,7 @@ namespace LibGit2pp
              * @return The OId of the newly created commit.
              * @throws LibGit2pp::Exception
              */
-            OId createCommit(const Tree& tree, const std::list<Commit>& parents, const Signature& author, const Signature& committer, const std::string& message, const std::string& ref = std::string());
+            OId createCommit(const Tree& tree, const std::list<Commit>& parents, const Signature& author, const Signature& committer, const std::string& message, const std::string& ref = {});
 
             /**
              * Create a new lightweight tag pointing at a target object
@@ -434,7 +435,7 @@ namespace LibGit2pp
              * @param pattern Standard fnmatch pattern
              * @throws LibGit2pp::Exception
              */
-            std::list<std::string> listTags(const std::string& pattern = {}) const;
+            std::vector<std::string> listTags(const std::string& pattern = {}) const;
 
             /**
              * Create a list with all references in the Repository.
@@ -442,7 +443,7 @@ namespace LibGit2pp
              * @param pattern Standard fnmatch pattern
              * @throws LibGit2pp::Exception
              */
-            std::list<std::string> listReferences() const;
+            std::vector<std::string> listReferences() const;
 
             /**
              * @brief Get the object database behind a Git repository
@@ -591,7 +592,7 @@ namespace LibGit2pp
             */
             void fetch(const std::string& remote, const std::string& head = std::string(), const std::string &message = std::string());
 
-            std::list<std::string> remoteBranches(const std::string& remoteName);
+            std::vector<std::string> remoteBranches(const std::string& remoteName);
 
 
             /**
