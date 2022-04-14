@@ -1,14 +1,9 @@
 cmake_minimum_required(VERSION 3.1)
 
 set(testdir ${CMAKE_BINARY_DIR}/TestDir)
-file(MAKE_DIRECTORY ${testdir})
-add_definitions(-DTEST_DIR=${testdir})
-
 set(existing_repository ${testdir}/existing_repository)
-add_definitions(-DTEST_EXISTING_REPOSITORY=${existing_repository})
 if(NOT EXISTS ${existing_repository})
     message(STATUS "Creating test repository ...")
-    file(MAKE_DIRECTORY ${existing_repository})
     file(MAKE_DIRECTORY ${existing_repository}/.git)
     file(GLOB_RECURSE gitfiles RELATIVE ${CMAKE_SOURCE_DIR}/.git ${CMAKE_SOURCE_DIR}/.git/*)
     foreach(gitfile ${gitfiles})
@@ -16,10 +11,6 @@ if(NOT EXISTS ${existing_repository})
     endforeach()
 endif()
 message(STATUS "Using test repository at '${existing_repository}'")
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
-set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
 
 set(DOCTEST_DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR})
 file(DOWNLOAD
@@ -31,11 +22,11 @@ file(DOWNLOAD
 macro(addTest name)
     set(testname test${name})
     add_executable(${testname} ${name}.cpp TestHelpers.h TestHelpers.cpp)
+    target_compile_definitions(${testname} PRIVATE TEST_DIR=${testdir} TEST_EXISTING_REPOSITORY=${existing_repository})
     target_include_directories(${testname} PRIVATE ${DOCTEST_DOWNLOAD_DIR})
     target_link_libraries(${testname} git2pp git2)
     add_test(NAME ${testname} COMMAND ${testname})
 endmacro()
-
 
 addTest(Init)
 addTest(Revision)

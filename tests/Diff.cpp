@@ -19,22 +19,16 @@
 */
 
 #include "TestHelpers.h"
-#include "git2pp/repository.h"
-#include "git2pp/tree.h"
-#include "git2pp/diff.h"
-#include "git2pp/diffdelta.h"
-#include "git2pp/difffile.h"
+#include "doctest.h"
+
+#include <string>
+#include <vector>
 
 using namespace LibGit2pp;
 
-class TestDiff : public TestBase
-{
-private slots:
-    void testDiffFileList();
-};
+TEST_SUITE_BEGIN("Diff");
 
-
-void TestDiff::testDiffFileList()
+TEST_CASE("FileList")
 {
     Repository repo;
     repo.open(ExistingRepository);
@@ -44,17 +38,15 @@ void TestDiff::testDiffFileList()
         Tree newTree = repo.lookupRevision("e3f21f35e5^{tree}").toTree(); // the development history of libgit2pp
         Diff diff = repo.diffTrees(oldTree, newTree);
         size_t numD = diff.numDeltas();
-        std::stringList expectedPaths = std::stringList() << "CMakeLists.txt" << "src/blob.cpp";
+        std::vector<std::string> expectedPaths = {"CMakeLists.txt", "src/blob.cpp"};
         for (size_t i = 0; i < numD; ++i) {
-            expectedPaths.removeAll(diff.delta(i).newFile().path());
+            expectedPaths.remove(diff.delta(i).newFile().path());
         }
 
         QVERIFY2(expectedPaths.isEmpty(), qPrintable("Paths not in diff: " + expectedPaths.join(", ")));
     } catch (const Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 }
 
-QTEST_MAIN(TestDiff)
-
-#include "Diff.moc"
+TEST_SUITE_END();

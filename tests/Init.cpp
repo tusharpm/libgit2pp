@@ -1,13 +1,8 @@
 
 #include "TestHelpers.h"
-
-#include "repository.h"
-#include <QDir>
-#include <QPointer>
-
+#include "doctest.h"
 
 using namespace LibGit2pp;
-
 
 class TestInit : public TestBase
 {
@@ -70,7 +65,7 @@ void TestInit::init()
     try {
         repo->init(repoPath, false);
     } catch (const LibGit2pp::Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 
     QVERIFY(QDir(repoPath).exists());
@@ -90,7 +85,7 @@ void TestInit::initBare()
     try {
         repo->init(repoPath, true);
     } catch (const LibGit2pp::Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 
     QVERIFY(QDir(repoPath).exists());

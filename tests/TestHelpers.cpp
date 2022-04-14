@@ -1,17 +1,12 @@
 #include "TestHelpers.h"
 
-#include <QDir>
-
-#include "global.h"
-#include "repository.h"
-
 using namespace LibGit2pp;
 
-void sleep::ms(int msec)
+std::string testDir()
 {
-    QThread::msleep(msec);
+    std::string testdir = LIBGIT2PP_STR(TEST_DIR) + "/" + QFileInfo(QTest::currentAppName()).fileName() + "/" + QTest::currentTestFunction();
+    QVERIFY(removeDir(testdir));
 }
-
 
 bool removeDir(const std::string & dirName)
 {
@@ -79,16 +74,6 @@ bool libgit2HasSSH() {
     return git_libgit2_features() & GIT_FEATURE_SSH;
 }
 
-
-void TestBase::init() {
-    testdir = VALUE_TO_QSTR(TEST_DIR) + "/" + QFileInfo(QTest::currentAppName()).fileName() + "/" + QTest::currentTestFunction();
-    QVERIFY(removeDir(testdir));
-}
-
-void TestBase::cleanup() {
-
-}
-
 void TestBase::initTestCase() {
     initLibGit2pp();
 }
@@ -103,6 +88,6 @@ void TestBase::initTestRepo()
         Repository repo;
         repo.clone(FileRepositoryUrl, testdir);
     } catch (const Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 }

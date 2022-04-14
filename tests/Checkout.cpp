@@ -20,30 +20,11 @@
 * this software.
 */
 #include "TestHelpers.h"
-
-#include "git2pp/repository.h"
-#include "git2pp/commit.h"
-#include "git2pp/diffdelta.h"
-#include "git2pp/difffile.h"
+#include "doctest.h"
 
 using namespace LibGit2pp;
 
-
-class TestCheckout : public TestBase
-{
-private:
-    void checkoutRemote();
-    void checkoutRemoteKde();
-    void checkoutCommitAsTree();
-    void checkoutHead();
-    void checkoutPaths();
-
-private:
-    void fetch(const std::string& branch, const std::string& repoPath, const std::string& remote);
-};
-
-
-void TestCheckout::fetch(const std::string& branch, const std::string& repoPath, const std::string& remote = "origin")
+void fetch(const std::string& branch, const std::string& repoPath, const std::string& remote = "origin")
 {
     try {
         Repository repo;
@@ -52,12 +33,13 @@ void TestCheckout::fetch(const std::string& branch, const std::string& repoPath,
         repo.fetch(remote, branch);
     }
     catch (const Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 }
 
+TEST_SUITE_BEGIN("Checkout");
 
-void TestCheckout::checkoutRemote()
+TEST_CASE("Remote")
 {
     fetch("master", testdir);
 
@@ -67,12 +49,11 @@ void TestCheckout::checkoutRemote()
         repo.checkoutRemote("master");
     }
     catch (const Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 }
 
-
-void TestCheckout::checkoutRemoteKde()
+TEST_CASE("RemoteKde")
 {
     fetch("master", testdir, "kde");
 
@@ -82,12 +63,12 @@ void TestCheckout::checkoutRemoteKde()
         repo.checkoutRemote("master", CheckoutOptions(), "kde");
     }
     catch (const Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 }
 
 
-void TestCheckout::checkoutCommitAsTree()
+TEST_CASE("CommitAsTree")
 {
     Repository repo;
     try {
@@ -95,7 +76,7 @@ void TestCheckout::checkoutCommitAsTree()
         OId id = OId::stringToOid("127c9e7d17");  // 127c9e7d17 is a commit where CMakeLists.txt was modified
         repo.checkoutTree(repo.lookupCommit(id), CheckoutOptions(CheckoutOptions::Safe, CheckoutOptions::RecreateMissing));
     } catch (const Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 
     StatusList status = repo.status(StatusOptions(StatusOptions::ShowOnlyIndex, StatusOptions::ExcludeSubmodules));
@@ -109,7 +90,7 @@ void TestCheckout::checkoutCommitAsTree()
     QVERIFY2(found, "Expected path was not part of the checked out commit");
 }
 
-void TestCheckout::checkoutHead()
+TEST_CASE("Head")
 {
     const std::string fileName(testdir + "/CMakeLists.txt");
 
@@ -119,13 +100,13 @@ void TestCheckout::checkoutHead()
         QVERIFY(QFile::remove(fileName));
         repo.checkoutHead(CheckoutOptions(CheckoutOptions::Force));
     } catch (const Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 
     QVERIFY(QFile::exists(fileName));
 }
 
-void TestCheckout::checkoutPaths()
+TEST_CASE("Paths")
 {
     const std::stringList paths("CMakeLists.txt");
     Repository repo;
@@ -136,7 +117,7 @@ void TestCheckout::checkoutPaths()
         opts.setPaths(paths);
         repo.checkoutTree(repo.lookupCommit(id), opts);
     } catch (const Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 
     StatusList status = repo.status(StatusOptions(StatusOptions::ShowOnlyIndex, StatusOptions::ExcludeSubmodules));
@@ -149,8 +130,4 @@ void TestCheckout::checkoutPaths()
     QCOMPARE(checkedoutPaths, paths);
 }
 
-
-QTEST_MAIN(TestCheckout)
-
-#include "Checkout.moc"
-
+TEST_SUITE_END();

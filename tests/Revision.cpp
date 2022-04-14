@@ -2,21 +2,12 @@
 
 
 #include "TestHelpers.h"
+#include "doctest.h"
 
-#include <QCoreApplication>
-#include <QPointer>
-#include <QTimer>
 #include <iostream>
-
 #include <bitset>
 
-#include "commit.h"
-#include "repository.h"
-#include "revwalk.h"
-
-
 using namespace LibGit2pp;
-
 
 class TestRevision : public TestBase
 {
@@ -45,7 +36,7 @@ void TestRevision::init()
         // Open a local fixed path
         repo->open(ExistingRepository);
     } catch (const Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 }
 
@@ -75,7 +66,7 @@ void TestRevision::revwalk()
         }
 
     } catch (const Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 }
 

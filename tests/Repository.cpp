@@ -19,12 +19,7 @@
 */
 
 #include "TestHelpers.h"
-
-#include "repository.h"
-#include "remote.h"
-
-#include <QPointer>
-#include <QDir>
+#include "doctest.h"
 
 using namespace LibGit2pp;
 

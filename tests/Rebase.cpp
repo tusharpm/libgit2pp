@@ -19,19 +19,7 @@
 */
 
 #include "TestHelpers.h"
-
-#include "index.h"
-#include "rebase.h"
-#include "remote.h"
-#include "repository.h"
-#include "revwalk.h"
-#include "diff.h"
-#include "diffdelta.h"
-#include "tree.h"
-
-#include <QFile>
-#include <QFileInfo>
-#include <QPointer>
+#include "doctest.h"
 
 using namespace LibGit2pp;
 

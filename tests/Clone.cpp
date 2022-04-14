@@ -20,106 +20,74 @@
 * this software.
 */
 #include "TestHelpers.h"
+#include "doctest.h"
 
-#include <QCoreApplication>
-#include <QTimer>
-
-#include <iostream>
 #include <bitset>
-
-#include "git2pp/commit.h"
-#include "git2pp/repository.h"
-#include "git2pp/credentials.h"
+#include <chrono>
+#include <iostream>
+#include <thread>
 
 using namespace LibGit2pp;
 
-
-class TestClone : public TestBase
+void clone(const std::string& url, const Credentials &credentials = {})
 {
-public:
-    TestClone();
+    int clone_progress = 0;
 
-    void cloneProgress(int p) 
-    { 
-        m_clone_progress = p;
+    Repository repo;
+    repo.setRemoteCredentials("origin", credentials);
+    repo.cloneProgress = [&clone_progress](int percent){
+        clone_progress = p;
         if (p % 20 == 0) {
             qDebug() << qPrintable(std::string("Progress : %1%").arg(p));
         }
-    }
-
-private slots:
-    void fileProtocol();
-    void gitProtocol();
-    void httpProtocol();
-    void httpsProtocol();
-
-private:
-    int m_clone_progress;
-    const std::string testdir;
-
-    void clone(const std::string& url, const Credentials &credentials = Credentials());
-};
-
-
-
-TestClone::TestClone() : testdir(VALUE_TO_STR(TEST_DIR))
-{
-}
-
-void TestClone::clone(const std::string& url, const Credentials &credentials)
-{
-    Repository repo;
-    repo.setRemoteCredentials("origin", credentials);
-    repo.cloneProgress = [this](int percent){ this->cloneProgress(percent); };
+    };
 
     std::string dirname = url;
     dirname.replace(":", "");
-    dirname.replace("//", "/");
     dirname.replace("//", "/");
     dirname.replace("/", "_");
     dirname.replace(".", "_");
     const std::string repoPath = testdir + "/clone_test/" + dirname;
 
     removeDir(repoPath);
-    sleep::ms(500);
-    m_clone_progress = 0;
+    using std::chrono_literals;
+    std::this_thread::sleep_for(500ms)
+    clone_progress = 0;
 
     qDebug() << "Cloning " << url;
     try {
         repo.clone(url, repoPath);
     }
     catch (const Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 
-    QCOMPARE(m_clone_progress, 100);
+    QCOMPARE(clone_progress, 100);
 }
 
+TEST_SUITE_BEGIN("Checkout");
 
-void TestClone::fileProtocol()
+TEST_CASE("fileProtocol")
 {
     clone(FileRepositoryUrl);
 }
 
 
-void TestClone::gitProtocol()
+TEST_CASE("gitProtocol")
 {
     clone(GitRemoteUrl);
 }
 
 
-void TestClone::httpProtocol()
+TEST_CASE("httpProtocol")
 {
     clone(HttpRemoteUrl);
 }
 
 
-void TestClone::httpsProtocol()
+TEST_CASE("httpsProtocol")
 {
     clone(HttpsRemoteUrl);
 }
 
-
-QTEST_MAIN(TestClone)
-
-#include "Clone.moc"
+TEST_SUITE_END();

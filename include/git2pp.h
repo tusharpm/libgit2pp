@@ -46,7 +46,6 @@
 #include "git2pp/global.h"
 #include "git2pp/index.h"
 #include "git2pp/indexentry.h"
-#include "git2pp/indexmodel.h"
 #include "git2pp/mergeoptions.h"
 #include "git2pp/object.h"
 #include "git2pp/oid.h"

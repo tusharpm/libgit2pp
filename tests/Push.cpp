@@ -19,10 +19,7 @@
 */
 
 #include "TestHelpers.h"
-
-#include "repository.h"
-#include "config.h"
-#include "remote.h"
+#include "doctest.h"
 
 using namespace LibGit2pp;
 
@@ -82,7 +79,7 @@ void TestPush::pushToNewTargetBranch()
         remote->push(std::stringList("refs/heads/master:refs/heads/" + targetBranch));
     }
     catch (const LibGit2pp::Exception& ex) {
-        QFAIL(ex.what());
+        FAIL(ex.what());
     }
 
     QVERIFY(repo.remoteBranches("origin").contains(targetBranch));
