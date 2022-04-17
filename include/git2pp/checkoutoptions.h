@@ -20,7 +20,7 @@
 #define LIBGIT2PP_CHECKOUTOPTIONS_H
 
 #include "git2.h"
-#include <list>
+#include <vector>
 #include <memory>
 #include "libgit2pp_config.h"
 #include "libgit2pp_types.h"
@@ -81,7 +81,7 @@ namespace LibGit2pp
          * The wildcard syntax is that accepted by the POSIX \c fnmatch function.
          * @param paths The paths to checkout.
          */
-        void setPaths(const std::list<std::string> &paths);
+        void setPaths(const std::vector<std::string> &paths);
 
         const git_checkout_options* data() const;
 

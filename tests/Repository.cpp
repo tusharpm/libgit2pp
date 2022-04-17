@@ -23,6 +23,8 @@
 
 using namespace LibGit2pp;
 
+TEST_SUITE_BEGIN("Repository");
+
 class TestRepository : public TestBase
 {
 public:
@@ -48,8 +50,6 @@ private:
 
 void TestRepository::init()
 {
-    TestBase::init();
-
     QVERIFY(!repo);
     repo = new Repository;
     QVERIFY(repo);
@@ -101,7 +101,7 @@ void TestRepository::testDeleteBranch()
     repo->createBranch(branchName);
 
     repo->deleteBranch(branchName);
-    EXPECT_THROW(repo->lookupShorthandRef(branchName), Exception);
+    CHECK_THROWS_AS(repo->lookupShorthandRef(branchName), Exception);
 }
 
 void TestRepository::testShouldIgnore()
@@ -129,7 +129,7 @@ void TestRepository::testShouldIgnore()
     QVERIFY(!repo->shouldIgnore(dir.absoluteFilePath(dir.absolutePath() + "/../" + dir.dirName() + "/" + testDirName + "/" + includedFileName)));
 
     // Absolute path outside the repository
-    EXPECT_THROW(repo->shouldIgnore(dir.absoluteFilePath(ignoredFileName)), Exception);
+    CHECK_THROWS_AS(repo->shouldIgnore(dir.absoluteFilePath(ignoredFileName)), Exception);
 }
 
 namespace LibGit2pp {
@@ -149,6 +149,4 @@ void TestRepository::testIdentitySetting()
     QCOMPARE(repo->identity(), id);
 }
 
-QTEST_MAIN(TestRepository)
-
-#include "Repository.moc"
+TEST_SUITE_END();

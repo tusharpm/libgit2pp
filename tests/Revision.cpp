@@ -9,6 +9,8 @@
 
 using namespace LibGit2pp;
 
+TEST_SUITE_BEGIN("Revision");
+
 class TestRevision : public TestBase
 {
 private slots:
@@ -23,8 +25,6 @@ private:
 
 void TestRevision::init()
 {
-    TestBase::init();
-
     QVERIFY(!repo);
 
     // Create a new repository object
@@ -70,6 +70,4 @@ void TestRevision::revwalk()
     }
 }
 
-QTEST_MAIN(TestRevision);
-
-#include "Revision.moc"
+TEST_SUITE_END();

@@ -23,7 +23,7 @@
 
 using namespace LibGit2pp;
 
-
+TEST_SUITE_BEGIN("Push");
 class TestPush : public TestBase
 {
 public:
@@ -41,20 +41,12 @@ private:
     const std::string testdir;
     const std::string existingRepo;
     const std::string existingBareRepo;
-
-    void initBareLocalRepo();
 };
-
 
 void TestPush::initTestCase()
 {
     TestBase::initTestCase();
 
-    initBareLocalRepo();
-}
-
-void TestPush::initBareLocalRepo()
-{
     removeDir(existingBareRepo);
     copyDir(existingRepo, existingBareRepo);
 
@@ -65,7 +57,7 @@ void TestPush::initBareLocalRepo()
 }
 
 
-void TestPush::pushToNewTargetBranch()
+TEST_CASE("pushToNewTargetBranch")
 {
     const std::string repoPath = testdir + "push_new_target_branch";
     QVERIFY(removeDir(repoPath));
@@ -76,7 +68,7 @@ void TestPush::pushToNewTargetBranch()
     try {
         repo.clone(existingBareRepo, repoPath);
         QScopedPointer<Remote> remote(repo.remote("origin"));
-        remote->push(std::stringList("refs/heads/master:refs/heads/" + targetBranch));
+        remote->push(std::list<std::string>{"refs/heads/master:refs/heads/" + targetBranch});
     }
     catch (const LibGit2pp::Exception& ex) {
         FAIL(ex.what());
@@ -85,6 +77,4 @@ void TestPush::pushToNewTargetBranch()
     QVERIFY(repo.remoteBranches("origin").contains(targetBranch));
 }
 
-QTEST_MAIN(TestPush)
-
-#include "Push.moc"
+TEST_SUITE_END();

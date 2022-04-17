@@ -1,105 +1,44 @@
 
 #include "TestHelpers.h"
 #include "doctest.h"
+#include <filesystem>
 
 using namespace LibGit2pp;
 
-class TestInit : public TestBase
+TEST_SUITE_BEGIN("Init");
+
+TEST_CASE("init")
 {
-public:
-    TestInit();
-    ~TestInit();
+    const std::string repoPath = getTestDir() + "/repo";
 
-private slots:
+    CHECK(removeDir(repoPath));
+    CHECK(!std::filesystem::exists(repoPath));
+    std::filesystem::create_directory(repoPath);
+    CHECK(std::filesystem::exists(repoPath));
 
-    void initTestCase();
-    void cleanupTestCase();
+    Repository repo;
+    SUBCASE("not Bare")
+    {
+        try {
+            repo.init(repoPath, false);
+        } catch (const LibGit2pp::Exception& ex) {
+            FAIL(ex.what());
+        }
 
-    void init();
-    void initBare();
-
-private:
-    QPointer<Repository> repo;
-
-    const std::string repoPath;
-};
-
-
-
-TestInit::TestInit() :
-    repo(0),
-    repoPath(std::string(VALUE_TO_STR(TEST_DIR)) + "/repo")
-{
-}
-
-
-void TestInit::initTestCase()
-{
-    TestBase::initTestCase();
-
-    QVERIFY(!repo);
-
-    // Create a new repository object
-    repo = new LibGit2pp::Repository();
-
-    QVERIFY(repo);
-}
-
-void TestInit::cleanupTestCase()
-{
-    QVERIFY(repo);
-    delete repo;
-    QVERIFY(!repo);
-
-    TestBase::cleanupTestCase();
-}
-
-void TestInit::init()
-{
-    QVERIFY(removeDir(repoPath));
-    QVERIFY(!QDir(repoPath).exists());
-
-    QDir().mkdir(repoPath);
-    QVERIFY(QDir(repoPath).exists());
-
-    try {
-        repo->init(repoPath, false);
-    } catch (const LibGit2pp::Exception& ex) {
-        FAIL(ex.what());
+        CHECK(std::filesystem::is_regular_file(repoPath + "/.git/HEAD"));
     }
 
-    QVERIFY(QDir(repoPath).exists());
-    QVERIFY(QFile(repoPath + "/.git").exists());
-    QVERIFY(QFile(repoPath + "/.git/HEAD").exists());
-}
+    SUBCASE("is Bare")
+    {
+        try {
+            repo.init(repoPath, true);
+        } catch (const LibGit2pp::Exception& ex) {
+            FAIL(ex.what());
+        }
 
-
-void TestInit::initBare()
-{
-    QVERIFY(removeDir(repoPath));
-    QVERIFY(!QDir(repoPath).exists());
-
-    QDir().mkdir(repoPath);
-    QVERIFY(QDir(repoPath).exists());
-
-    try {
-        repo->init(repoPath, true);
-    } catch (const LibGit2pp::Exception& ex) {
-        FAIL(ex.what());
+        CHECK(!std::filesystem::exists(repoPath + "/.git"));
+        CHECK(std::filesystem::is_regular_file(repoPath + "/HEAD"));
     }
-
-    QVERIFY(QDir(repoPath).exists());
-    QVERIFY(!QFile(repoPath + "/.git").exists());
-    QVERIFY(QFile(repoPath + "/HEAD").exists());
 }
 
-
-TestInit::~TestInit()
-{
-    delete repo;
-}
-
-
-QTEST_MAIN(TestInit);
-
-#include "Init.moc"
+TEST_SUITE_END();

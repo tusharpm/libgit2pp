@@ -50,8 +50,8 @@ void clone(const std::string& url, const Credentials &credentials = {})
     const std::string repoPath = testdir + "/clone_test/" + dirname;
 
     removeDir(repoPath);
-    using std::chrono_literals;
-    std::this_thread::sleep_for(500ms)
+    using namespace std::chrono_literals;
+    std::this_thread::sleep_for(500ms);
     clone_progress = 0;
 
     qDebug() << "Cloning " << url;

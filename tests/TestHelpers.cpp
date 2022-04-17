@@ -1,71 +1,41 @@
 #include "TestHelpers.h"
+#include <filesystem>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include "doctest.h"
 
 using namespace LibGit2pp;
 
-std::string testDir()
+const std::string HttpRemoteUrl("http://anongit.kde.org/libgit2pp");
+const std::string HttpsRemoteUrl("https://github.com/libgit2pp/libgit2pp.git");
+const std::string GitRemoteUrl("git://anongit.kde.org/libgit2pp");
+const std::string ExistingRepository(LIBGIT2PP_STR(TEST_EXISTING_REPOSITORY));
+const std::string FileRepositoryUrl("file://" + ExistingRepository + "/.git");
+
+std::string getTestDir(bool remove)
 {
-    std::string testdir = LIBGIT2PP_STR(TEST_DIR) + "/" + QFileInfo(QTest::currentAppName()).fileName() + "/" + QTest::currentTestFunction();
-    QVERIFY(removeDir(testdir));
+    auto testCase = doctest::getContextOptions()->currentTest;
+    auto testCaseName = testCase->m_full_name.c_str();
+    auto testSuiteName = testCase->m_test_suite;
+
+    auto testdir = std::filesystem::path{LIBGIT2PP_STR(TEST_DIR)} / testSuiteName / testCaseName;
+    if (remove) CHECK(removeDir(testdir));
+    return testdir;
 }
 
 bool removeDir(const std::string & dirName)
 {
-    bool result = true;
-    QDir dir(dirName);
-
-    if (dir.exists(dirName)) {
-        Q_FOREACH(QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst)) {
-            if (info.isDir()) {
-                result = removeDir(info.absoluteFilePath());
-            }
-            else {
-                result = QFile::remove(info.absoluteFilePath());
-                if (!result) {
-                    QFile(info.absoluteFilePath()).setPermissions(QFile::WriteOwner);
-                    result = QFile::remove(info.absoluteFilePath());
-                }
-                if (!result) {
-                    qDebug() << "Could not remove " << info.absoluteFilePath();
-                }
-            }
-
-            if (!result) {
-                return result;
-            }
-        }
-        result = dir.rmdir(dirName);
-        if (!result) {
-            qDebug() << "Could not remove " << dirName;
-        }
-    }
-    return result;
+    return !std::filesystem::exists(dirName) || std::filesystem::remove_all(dirName);
 }
 
 bool copyDir(std::string srcPath, std::string destPath)
 {
-    QDir srcDir(srcPath);
-    if (!srcDir.exists()) {
-        qDebug() << "Source directory does not exist:" << srcPath;
+    std::filesystem::path srcDir{srcPath};
+    if (!std::filesystem::exists(srcDir)) {
+        FAIL("Source directory does not exist:", srcPath);
         return false;
     }
 
-    for (std::string dir : srcDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
-        std::string subDestPath = destPath + QDir::separator() + dir;
-        if (!srcDir.mkpath(subDestPath)) {
-            qDebug() << "Could not create target directory:" << subDestPath;
-            return false;
-        }
-        if (!copyDir(srcPath + QDir::separator() + dir, subDestPath)) {
-            return false;
-        }
-    }
-
-    for (std::string file : srcDir.entryList(QDir::Files)) {
-        if (!QFile::copy(srcPath + QDir::separator() + file, destPath + QDir::separator() + file)) {
-            qDebug() << "Could not copy" << file << "from" << srcPath << "to" << destPath;
-            return false;
-        }
-    }
+    std::filesystem::copy(srcDir, destPath, std::filesystem::copy_options::recursive);
 
     return true;
 }
@@ -85,6 +55,7 @@ void TestBase::cleanupTestCase() {
 void TestBase::initTestRepo()
 {
     try {
+        auto testdir = getTestDir(false);
         Repository repo;
         repo.clone(FileRepositoryUrl, testdir);
     } catch (const Exception& ex) {

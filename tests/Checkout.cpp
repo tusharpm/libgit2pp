@@ -22,28 +22,26 @@
 #include "TestHelpers.h"
 #include "doctest.h"
 
+#include <filesystem>
+
 using namespace LibGit2pp;
 
 void fetch(const std::string& branch, const std::string& repoPath, const std::string& remote = "origin")
 {
-    try {
-        Repository repo;
-        repo.init(repoPath);
-        repo.remoteAdd(remote, HttpRemoteUrl);
-        repo.fetch(remote, branch);
-    }
-    catch (const Exception& ex) {
-        FAIL(ex.what());
-    }
+    Repository repo;
+    repo.init(repoPath);
+    repo.remoteAdd(remote, HttpRemoteUrl);
+    repo.fetch(remote, branch);
 }
 
 TEST_SUITE_BEGIN("Checkout");
 
 TEST_CASE("Remote")
 {
-    fetch("master", testdir);
-
     try {
+        auto testdir = getTestDir();
+        fetch("master", testdir);
+
         Repository repo;
         repo.open(testdir);
         repo.checkoutRemote("master");
@@ -55,9 +53,10 @@ TEST_CASE("Remote")
 
 TEST_CASE("RemoteKde")
 {
-    fetch("master", testdir, "kde");
-
     try {
+        auto testdir = getTestDir();
+        fetch("master", testdir, "kde");
+
         Repository repo;
         repo.open(testdir);
         repo.checkoutRemote("master", CheckoutOptions(), "kde");
@@ -70,6 +69,7 @@ TEST_CASE("RemoteKde")
 
 TEST_CASE("CommitAsTree")
 {
+    auto testdir = getTestDir();
     Repository repo;
     try {
         repo.clone(FileRepositoryUrl, testdir);
@@ -87,28 +87,30 @@ TEST_CASE("CommitAsTree")
             break;
         }
     }
-    QVERIFY2(found, "Expected path was not part of the checked out commit");
+    CHECK_MESSAGE(found, "Expected path was not part of the checked out commit");
 }
 
 TEST_CASE("Head")
 {
-    const std::string fileName(testdir + "/CMakeLists.txt");
+    auto testdir = getTestDir();
+    auto fileName = std::filesystem::path(testdir) / "CMakeLists.txt";
 
     Repository repo;
     try {
         repo.clone(FileRepositoryUrl, testdir);
-        QVERIFY(QFile::remove(fileName));
+        CHECK(std::filesystem::remove(fileName));
         repo.checkoutHead(CheckoutOptions(CheckoutOptions::Force));
     } catch (const Exception& ex) {
         FAIL(ex.what());
     }
 
-    QVERIFY(QFile::exists(fileName));
+    CHECK(std::filesystem::exists(fileName));
 }
 
 TEST_CASE("Paths")
 {
-    const std::stringList paths("CMakeLists.txt");
+    auto testdir = getTestDir();
+    const std::vector<std::string> paths{"CMakeLists.txt"};
     Repository repo;
     try {
         repo.clone(FileRepositoryUrl, testdir);
@@ -121,13 +123,13 @@ TEST_CASE("Paths")
     }
 
     StatusList status = repo.status(StatusOptions(StatusOptions::ShowOnlyIndex, StatusOptions::ExcludeSubmodules));
-    std::stringList checkedoutPaths;
+    std::vector<std::string> checkedoutPaths;
     for (size_t i = 0; i < status.entryCount(); ++i) {
         const StatusEntry entry = status.entryByIndex(i);
-        checkedoutPaths << entry.headToIndex().newFile().path();
+        checkedoutPaths.push_back(entry.headToIndex().newFile().path());
     }
 
-    QCOMPARE(checkedoutPaths, paths);
+    CHECK(checkedoutPaths == paths);
 }
 
 TEST_SUITE_END();

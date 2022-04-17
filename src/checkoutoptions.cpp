@@ -80,7 +80,7 @@ public:
         native.target_directory = m_target_directory.data();
     }
 
-    void setPaths(const std::list<std::string> &paths)
+    void setPaths(const std::vector<std::string> &paths)
     {
         std::vector<QByteArray> pathByteArrays;
         pathByteArrays.reserve(paths.size());
@@ -113,7 +113,7 @@ void CheckoutOptions::setTargetDirectory(const std::string &dir)
     d_ptr->setTargetDirectory(dir);
 }
 
-void CheckoutOptions::setPaths(const std::list<std::string> &paths)
+void CheckoutOptions::setPaths(const std::vector<std::string> &paths)
 {
     d_ptr->setPaths(paths);
 }

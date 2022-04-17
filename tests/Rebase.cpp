@@ -23,6 +23,8 @@
 
 using namespace LibGit2pp;
 
+TEST_SUITE_BEGIN("Rebase");
+
 class TestRebase : public TestBase
 {
 public:
@@ -50,7 +52,6 @@ TestRebase::TestRebase()
 
 void TestRebase::init()
 {
-    TestBase::init();
     initTestRepo();
     repo = std::shared_ptr<Repository>(new Repository);
     repo->open(testdir + "/.git");
@@ -117,7 +118,4 @@ void TestRebase::TestRebasingMasterOntoAnotherBranchProducesCorrectTopology()
     QCOMPARE(refUpstream.target(), oid);
 }
 
-
-QTEST_MAIN(TestRebase);
-
-#include "Rebase.moc"
+TEST_SUITE_END();
