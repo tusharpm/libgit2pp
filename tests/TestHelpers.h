@@ -9,21 +9,16 @@ extern const std::string GitRemoteUrl;
 extern const std::string ExistingRepository;
 extern const std::string FileRepositoryUrl;
 
-std::string getTestDir(bool remove = true);
-
+void replaceSubstring(std::string& source, const std::string& match, const std::string& replacement);
 bool removeDir(const std::string & dirName);
-
 bool copyDir(std::string srcPath, std::string destPath);
-
-bool libgit2HasSSH();
-
 
 struct TestBase
 {
-    virtual void initTestCase();
-    virtual void cleanupTestCase();
+    TestBase();
+    ~TestBase();
 
-    void initTestRepo();
+    std::string getTestDir(bool remove = true);
+    std::string initTestRepo(); //< returns testDir used by repo.
 };
-
 #endif  // LIBGIT2PP_TEST_HELPERS_H

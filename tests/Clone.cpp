@@ -29,63 +29,66 @@
 
 using namespace LibGit2pp;
 
-void clone(const std::string& url, const Credentials &credentials = {})
-{
-    int clone_progress = 0;
-
-    Repository repo;
-    repo.setRemoteCredentials("origin", credentials);
-    repo.cloneProgress = [&clone_progress](int percent){
-        clone_progress = p;
-        if (p % 20 == 0) {
-            qDebug() << qPrintable(std::string("Progress : %1%").arg(p));
-        }
-    };
-
-    std::string dirname = url;
-    dirname.replace(":", "");
-    dirname.replace("//", "/");
-    dirname.replace("/", "_");
-    dirname.replace(".", "_");
-    const std::string repoPath = testdir + "/clone_test/" + dirname;
-
-    removeDir(repoPath);
-    using namespace std::chrono_literals;
-    std::this_thread::sleep_for(500ms);
-    clone_progress = 0;
-
-    qDebug() << "Cloning " << url;
-    try {
-        repo.clone(url, repoPath);
-    }
-    catch (const Exception& ex) {
-        FAIL(ex.what());
-    }
-
-    QCOMPARE(clone_progress, 100);
-}
-
 TEST_SUITE_BEGIN("Checkout");
 
-TEST_CASE("fileProtocol")
+struct CloneTest : TestBase {
+    void clone(const std::string& url, const Credentials &credentials = {})
+    {
+        int clone_progress = 0;
+
+        Repository repo;
+        repo.setRemoteCredentials("origin", credentials);
+        repo.cloneProgress = [&clone_progress](int percent){
+            clone_progress = percent;
+            if (percent % 20 == 0) {
+                MESSAGE("Progress: ", percent);
+            }
+        };
+
+        std::string dirname = url;
+        replaceSubstring(dirname, ":", "");
+        replaceSubstring(dirname, "//", "/");
+        replaceSubstring(dirname, "/", "_");
+        replaceSubstring(dirname, ".", "_");
+        const auto testdir = getTestDir();
+        const std::string repoPath = testdir + "/clone_test/" + dirname;
+
+        removeDir(repoPath);
+        using namespace std::chrono_literals;
+        std::this_thread::sleep_for(500ms);
+        clone_progress = 0;
+
+        MESSAGE("Cloning ", url);
+        try {
+            repo.clone(url, repoPath);
+        }
+        catch (const Exception& ex) {
+            FAIL(ex.what());
+        }
+
+        CHECK(clone_progress == 100);
+    }
+};
+
+TEST_CASE_FIXTURE(CloneTest, "fileProtocol")
 {
     clone(FileRepositoryUrl);
 }
 
 
-TEST_CASE("gitProtocol")
+TEST_CASE_FIXTURE(CloneTest, "gitProtocol")
 {
     clone(GitRemoteUrl);
 }
 
 
-TEST_CASE("httpProtocol")
+TEST_CASE_FIXTURE(CloneTest, "httpProtocol")
 {
     clone(HttpRemoteUrl);
 }
 
 
-TEST_CASE("httpsProtocol")
+TEST_CASE_FIXTURE(CloneTest, "httpsProtocol")
 {
     clone(HttpsRemoteUrl);
 }

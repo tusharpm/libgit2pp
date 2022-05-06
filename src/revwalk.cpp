@@ -19,8 +19,6 @@
  */
 
 #include "git2pp/revwalk.h"
-
-#include <iostream>
 #include "git2pp/commit.h"
 #include "git2pp/ref.h"
 #include "git2pp/exception.h"
@@ -130,10 +128,9 @@ void RevWalk::setSorting(SortModes sm)
     git_revwalk_sorting(m_revWalk, sm);
 }
 
-Repository* RevWalk::repository()
+std::unique_ptr<Repository> RevWalk::repository() const
 {
-    Repository* repo = new Repository(git_revwalk_repository(m_revWalk));
-    return repo;
+    return std::make_unique<Repository>(git_revwalk_repository(m_revWalk));
 }
 
 const Repository* RevWalk::constRepository()

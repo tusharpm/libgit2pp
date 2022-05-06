@@ -36,7 +36,7 @@ void fetch(const std::string& branch, const std::string& repoPath, const std::st
 
 TEST_SUITE_BEGIN("Checkout");
 
-TEST_CASE("Remote")
+TEST_CASE_FIXTURE(TestBase, "Remote")
 {
     try {
         auto testdir = getTestDir();
@@ -51,7 +51,7 @@ TEST_CASE("Remote")
     }
 }
 
-TEST_CASE("RemoteKde")
+TEST_CASE_FIXTURE(TestBase, "RemoteKde")
 {
     try {
         auto testdir = getTestDir();
@@ -67,7 +67,7 @@ TEST_CASE("RemoteKde")
 }
 
 
-TEST_CASE("CommitAsTree")
+TEST_CASE_FIXTURE(TestBase, "CommitAsTree")
 {
     auto testdir = getTestDir();
     Repository repo;
@@ -90,10 +90,10 @@ TEST_CASE("CommitAsTree")
     CHECK_MESSAGE(found, "Expected path was not part of the checked out commit");
 }
 
-TEST_CASE("Head")
+TEST_CASE_FIXTURE(TestBase, "Head")
 {
     auto testdir = getTestDir();
-    auto fileName = std::filesystem::path(testdir) / "CMakeLists.txt";
+    auto fileName = std::filesystem::path{testdir} / "CMakeLists.txt";
 
     Repository repo;
     try {
@@ -107,7 +107,7 @@ TEST_CASE("Head")
     CHECK(std::filesystem::exists(fileName));
 }
 
-TEST_CASE("Paths")
+TEST_CASE_FIXTURE(TestBase, "Paths")
 {
     auto testdir = getTestDir();
     const std::vector<std::string> paths{"CMakeLists.txt"};

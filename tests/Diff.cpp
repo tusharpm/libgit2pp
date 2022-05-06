@@ -28,7 +28,7 @@ using namespace LibGit2pp;
 
 TEST_SUITE_BEGIN("Diff");
 
-TEST_CASE("FileList")
+TEST_CASE_FIXTURE(TestBase, "FileList")
 {
     Repository repo;
     repo.open(ExistingRepository);
@@ -38,12 +38,14 @@ TEST_CASE("FileList")
         Tree newTree = repo.lookupRevision("e3f21f35e5^{tree}").toTree(); // the development history of libgit2pp
         Diff diff = repo.diffTrees(oldTree, newTree);
         size_t numD = diff.numDeltas();
-        std::vector<std::string> expectedPaths = {"CMakeLists.txt", "src/blob.cpp"};
+        std::vector<std::string> expectedPaths{"CMakeLists.txt", "src/blob.cpp"};
         for (size_t i = 0; i < numD; ++i) {
-            expectedPaths.remove(diff.delta(i).newFile().path());
+            auto iter = std::find(expectedPaths.begin(), expectedPaths.end(), diff.delta(i).newFile().path());
+            if (iter != expectedPaths.end()) {
+                expectedPaths.erase(iter);
+            }
         }
-
-        QVERIFY2(expectedPaths.isEmpty(), qPrintable("Paths not in diff: " + expectedPaths.join(", ")));
+        CHECK(expectedPaths.empty());
     } catch (const Exception& ex) {
         FAIL(ex.what());
     }

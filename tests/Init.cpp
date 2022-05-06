@@ -7,13 +7,13 @@ using namespace LibGit2pp;
 
 TEST_SUITE_BEGIN("Init");
 
-TEST_CASE("init")
+TEST_CASE_FIXTURE(TestBase, "init")
 {
     const std::string repoPath = getTestDir() + "/repo";
 
     CHECK(removeDir(repoPath));
     CHECK(!std::filesystem::exists(repoPath));
-    std::filesystem::create_directory(repoPath);
+    std::filesystem::create_directories(repoPath);
     CHECK(std::filesystem::exists(repoPath));
 
     Repository repo;

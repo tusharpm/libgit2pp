@@ -53,7 +53,6 @@ namespace LibGit2pp
 
             ~Database();
 
-        public:
             /**
             * Create a new object database and automatically add
             * the two default backends:
@@ -81,10 +80,10 @@ namespace LibGit2pp
              *
              * Read <odb_backends.h> for more information.
              *
-             * @param backend pointer to a databaseBackend instance
+             * @param backend reference to a databaseBackend instance
              * @return 0 on sucess; error code otherwise
              */
-            int addBackend(DatabaseBackend *backend, int priority);
+            int addBackend(DatabaseBackend& backend, int priority);
 
             /**
             * Add a custom backend to an existing Object DB; this
@@ -97,10 +96,10 @@ namespace LibGit2pp
             *
             * Read <odb_backends.h> for more information.
             *
-            * @param backend pointer to a databaseBackend instance
+            * @param backend reference to a databaseBackend instance
             * @return 0 on sucess; error code otherwise
             */
-            int addAlternate(DatabaseBackend *backend, int priority);
+            int addAlternate(DatabaseBackend& backend, int priority);
 
             /**
              * Determine if the given object can be found in the object database.
@@ -111,7 +110,7 @@ namespace LibGit2pp
              * - true, if the object was found
              * - false, otherwise
              */
-            int exists(Database *db, const OId& id);
+            int exists(Database& db, const OId& id);
 
             git_odb* data() const;
             const git_odb* constData() const;

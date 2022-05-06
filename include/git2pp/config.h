@@ -81,8 +81,6 @@ namespace LibGit2pp
           *
           * @param key the name of the value to write
           * @param value the value
-          *
-          * @todo handle the QVariant type correctly
           */
         void setValue(const std::string &key, const std::string &value);
 

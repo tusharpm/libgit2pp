@@ -24,57 +24,39 @@
 using namespace LibGit2pp;
 
 TEST_SUITE_BEGIN("Push");
-class TestPush : public TestBase
+
+TEST_CASE_FIXTURE(TestBase, "pushToNewTargetBranch")
 {
-public:
-    TestPush() :
-        testdir(VALUE_TO_QSTR(TEST_DIR) + "/push_test/"),
-        existingRepo(ExistingRepository + "/.git"),
-        existingBareRepo(ExistingRepository + "_bare")
-    {}
-
-private slots:
-    void initTestCase();
-    void pushToNewTargetBranch();
-
-private:
-    const std::string testdir;
-    const std::string existingRepo;
-    const std::string existingBareRepo;
-};
-
-void TestPush::initTestCase()
-{
-    TestBase::initTestCase();
-
+    const auto testdir = getTestDir() + "/push_test/";
+    const auto existingRepo = ExistingRepository + "/.git";
+    const auto existingBareRepo = ExistingRepository + "_bare";
     removeDir(existingBareRepo);
     copyDir(existingRepo, existingBareRepo);
 
-    Repository repo;
-    repo.open(existingBareRepo);
-    Config cfg = repo.configuration();
-    cfg.setValue("core.bare", "true");
-}
-
-
-TEST_CASE("pushToNewTargetBranch")
-{
-    const std::string repoPath = testdir + "push_new_target_branch";
-    QVERIFY(removeDir(repoPath));
+    {
+        Repository repo;
+        repo.open(existingBareRepo);
+        Config cfg = repo.configuration();
+        cfg.setValue("core.bare", "true");
+    }
 
     const std::string targetBranch("push_new_target_branch");
+
+    const std::string repoPath = testdir + targetBranch;
+    CHECK(removeDir(repoPath));
 
     Repository repo;
     try {
         repo.clone(existingBareRepo, repoPath);
-        QScopedPointer<Remote> remote(repo.remote("origin"));
+        auto remote = repo.remote("origin");
         remote->push(std::list<std::string>{"refs/heads/master:refs/heads/" + targetBranch});
     }
-    catch (const LibGit2pp::Exception& ex) {
+    catch (const Exception& ex) {
         FAIL(ex.what());
     }
 
-    QVERIFY(repo.remoteBranches("origin").contains(targetBranch));
+    const auto remoteBranches = repo.remoteBranches("origin");
+    CHECK(std::find(remoteBranches.begin(), remoteBranches.end(), targetBranch) != remoteBranches.end());
 }
 
 TEST_SUITE_END();

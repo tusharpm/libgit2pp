@@ -20,102 +20,68 @@
 
 #include "TestHelpers.h"
 #include "doctest.h"
+#include <filesystem>
+#include <fstream>
 
 using namespace LibGit2pp;
 
 TEST_SUITE_BEGIN("Rebase");
 
-class TestRebase : public TestBase
+Signature sig{"unknown", "unknown"};
+
+OId commitIndexToRef(Repository& repo, const std::string &refSpec)
 {
-public:
-    TestRebase();
-
-private slots:
-    void init();
-    void cleanup();
-
-    void TestRebasingMasterOntoAnotherBranchProducesCorrectTopology();
-
-private:
-    std::shared_ptr<Repository> repo;
-    Signature sig;
-
-    OId commitIndexToRef(const std::string &refSpec);
-    void writeToIndex(const std::string &path, const std::string &text);
-};
-
-TestRebase::TestRebase()
-    : TestBase(),
-      sig("unknown", "unknown")
-{
+    Tree index = repo.lookupTree(repo.index().createTree());
+    std::list<Commit> parents{repo.lookupCommit(repo.head().target())};
+    return repo.createCommit(index, parents, sig, sig, "commit", refSpec);
 }
 
-void TestRebase::init()
+void writeToIndex(Repository& repo, const std::string &path, const std::string &text)
 {
-    initTestRepo();
-    repo = std::shared_ptr<Repository>(new Repository);
-    repo->open(testdir + "/.git");
+    std::ofstream{path} << text;
+    repo.index().addByPath(std::filesystem::path{path}.filename());
+    repo.index().write();
 }
 
-void TestRebase::cleanup()
-{
-    repo.clear();
-    TestBase::cleanup();
-}
-
-OId TestRebase::commitIndexToRef(const std::string &refSpec)
-{
-    Tree index = repo->lookupTree(repo->index().createTree());
-    std::list<Commit> parents;
-    parents.append(repo->lookupCommit(repo->head().target()));
-    return repo->createCommit(index, parents, sig, sig, "commit", refSpec);
-}
-
-void TestRebase::writeToIndex(const std::string &path, const std::string &text)
-{
-    QFile file(path);
-    file.open(QFile::ReadWrite);
-    file.write(text.toUtf8());
-    file.close();
-    repo->index().addByPath(QFileInfo(path).fileName());
-    repo->index().write();
-}
-
-void TestRebase::TestRebasingMasterOntoAnotherBranchProducesCorrectTopology()
+TEST_CASE_FIXTURE(TestBase, "Rebase master onto another branch produces correct topology")
 {
     // set up the repository
-    std::string refSpecOntoBranch("refs/heads/onto");
-    repo->createBranch("onto");
-    std::string pathOntoBranchFile(testdir + "/onto.txt");
-    writeToIndex(pathOntoBranchFile, "testing");
-    OId oidOntoCommit = commitIndexToRef(refSpecOntoBranch);
+    const auto testdir = getTestDir();
+    Repository repo;
+    repo.open(testdir + "/.git");
 
-    repo->checkoutHead(CheckoutOptions(CheckoutOptions::Force));
+    std::string refSpecOntoBranch("refs/heads/onto");
+    repo.createBranch("onto");
+    std::string pathOntoBranchFile(testdir + "/onto.txt");
+    writeToIndex(repo, pathOntoBranchFile, "testing");
+    OId oidOntoCommit = commitIndexToRef(repo, refSpecOntoBranch);
+
+    repo.checkoutHead(CheckoutOptions(CheckoutOptions::Force));
 
     std::string pathMasterBranchFile(testdir + "/master.txt");
-    writeToIndex(pathMasterBranchFile, "testing testing");
-    commitIndexToRef("HEAD");
+    writeToIndex(repo, pathMasterBranchFile, "testing testing");
+    commitIndexToRef(repo, "HEAD");
 
     // rebase master onto another branch
-    Reference refOnto = repo->lookupRef(refSpecOntoBranch);
-    Reference refMaster = repo->lookupRef("refs/heads/master");
-    Reference refUpstream = repo->lookupRef("refs/remotes/origin/master");
-    Rebase rebase = repo->rebase(refMaster, refUpstream, refOnto, RebaseOptions(CheckoutOptions(CheckoutOptions::Safe, CheckoutOptions::RecreateMissing)));
+    Reference refOnto = repo.lookupRef(refSpecOntoBranch);
+    Reference refMaster = repo.lookupRef("refs/heads/master");
+    Reference refUpstream = repo.lookupRef("refs/remotes/origin/master");
+    Rebase rebase = repo.rebase(refMaster, refUpstream, refOnto, RebaseOptions(CheckoutOptions(CheckoutOptions::Safe, CheckoutOptions::RecreateMissing)));
     rebase.next();
     OId oidRebasedMaster = rebase.commit(sig, sig, std::string());
     rebase.finish(sig);
 
     // check results
-    RevWalk walk(*repo);
+    RevWalk walk{repo};
     walk.setSorting(RevWalk::Topological);
     walk.pushHead();
     OId oid;
-    QVERIFY(walk.next(oid));
-    QCOMPARE(oidRebasedMaster, oid);
-    QVERIFY(walk.next(oid));
-    QCOMPARE(oidOntoCommit, oid);
-    QVERIFY(walk.next(oid));
-    QCOMPARE(refUpstream.target(), oid);
+    CHECK(walk.next(oid));
+    CHECK_EQ(oidRebasedMaster, oid);
+    CHECK(walk.next(oid));
+    CHECK_EQ(oidOntoCommit, oid);
+    CHECK(walk.next(oid));
+    CHECK_EQ(refUpstream.target(), oid);
 }
 
 TEST_SUITE_END();

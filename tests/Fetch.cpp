@@ -23,154 +23,146 @@
 #include "doctest.h"
 
 #include <iostream>
-#include <bitset>
+#include <thread>
 
 using namespace LibGit2pp;
 
-void fetch(const std::string& branch, const std::string dirname)
-{
-    LibGit2pp::Repository repo;
-
-    const std::string repoPath = testdir + "/fetch_test/" + dirname;
-
-    QVERIFY(removeDir(repoPath));
-    sleep::ms(500);
-
-    try {
-        repo.init(repoPath);
-        repo.remoteAdd("kde", HttpRemoteUrl);
-        repo.fetch("kde", branch);
-    }
-    catch (const LibGit2pp::Exception& ex) {
-        FAIL(ex.what());
-    }
-}
-
 TEST_SUITE_BEGIN("Fetch");
 
-TEST_CASE("remoteAdd")
-{
-    LibGit2pp::Repository repo;
+struct FetchTest : TestBase {
+    void fetch(const std::string& branch, const std::string dirname)
+    {
+        const auto testdir = getTestDir();
+        const std::string repoPath = testdir + "/fetch_test/" + dirname;
 
+        CHECK(removeDir(repoPath));
+        using namespace std::chrono_literals;
+        std::this_thread::sleep_for(500ms);
+
+        try {
+            Repository repo;
+            repo.init(repoPath);
+            repo.remoteAdd("kde", HttpRemoteUrl);
+            repo.fetch("kde", branch);
+        }
+        catch (const Exception& ex) {
+            FAIL(ex.what());
+        }
+    }
+};
+
+TEST_CASE_FIXTURE(FetchTest, "remoteAdd")
+{
+    const auto testdir = getTestDir();
     const std::string repoPath = testdir + "/fetch_test/remote_add";
 
-    QVERIFY(removeDir(repoPath));
-    sleep::ms(500);
-    m_progress = 0;
+    CHECK(removeDir(repoPath));
+    using namespace std::chrono_literals;
+    std::this_thread::sleep_for(500ms);
 
     try {
+        Repository repo;
         repo.init(repoPath);
         repo.remoteAdd("kde", HttpRemoteUrl);
     }
-    catch (const LibGit2pp::Exception& ex) {
+    catch (const Exception& ex) {
         FAIL(ex.what());
     }
 }
 
 
-TEST_CASE("remoteAddExisiting")
+TEST_CASE_FIXTURE(FetchTest, "remoteAddExisiting")
 {
-    LibGit2pp::Repository repo;
-
+    const auto testdir = getTestDir();
     const std::string repoPath = testdir + "/fetch_test/add_exisiting";
 
-    QVERIFY(removeDir(repoPath));
-    sleep::ms(500);
+    CHECK(removeDir(repoPath));
+    using namespace std::chrono_literals;
+    std::this_thread::sleep_for(500ms);
 
     try {
+        Repository repo;
         repo.init(repoPath);
         repo.remoteAdd("kde", HttpRemoteUrl);
         repo.remoteAdd("kde", HttpRemoteUrl);
     }
-    catch (const LibGit2pp::Exception& ex) {
+    catch (const Exception& ex) {
         FAIL(ex.what());
     }
 
     // TODO verify remote branches with unit test
 }
 
-
-
-TEST_CASE("remoteAddExisitingDifferentUrl")
+TEST_CASE_FIXTURE(FetchTest, "remoteAddExisitingDifferentUrl")
 {
-    LibGit2pp::Repository repo;
-
+    const auto testdir = getTestDir();
     const std::string repoPath = testdir + "/fetch_test/add_existing_url";
 
-    QVERIFY(removeDir(repoPath));
-    sleep::ms(500);
+    CHECK(removeDir(repoPath));
+    using namespace std::chrono_literals;
+    std::this_thread::sleep_for(500ms);
 
+    Repository repo;
     try {
         repo.init(repoPath);
         repo.remoteAdd("kde", HttpRemoteUrl);
     }
-    catch (const LibGit2pp::Exception& ex) {
+    catch (const Exception& ex) {
         FAIL(ex.what());
     }
 
-    try {
-        repo.remoteAdd("kde", "XYZ");
-    }
-    catch (const LibGit2pp::Exception&) {
-        return;
-    }
-
-    FAIL("Could add invalid remote URL");
+    CHECK_THROWS_AS_MESSAGE(repo.remoteAdd("kde", "XYZ"), Exception, "add invalid remote URL");
 }
 
-TEST_CASE("fetchMaster")
+TEST_CASE_FIXTURE(FetchTest, "fetchMaster")
 {
     fetch("master", "fetch_master");
 }
 
-TEST_CASE("fetchAll")
+TEST_CASE_FIXTURE(FetchTest, "fetchAll")
 {
     fetch("", "fetch_default");
 }
 
-TEST_CASE("fetchAdditionalBranch")
+TEST_CASE_FIXTURE(FetchTest, "fetchAdditionalBranch")
 {
     fetch("master", "fetch_additional");
-
-    LibGit2pp::Repository repo;
-
+    const auto testdir = getTestDir(false);
     const std::string repoPath = testdir + "/fetch_test/fetch_additional";
 
     try {
+        Repository repo;
         repo.open(repoPath);
         repo.fetch("kde", "develop");
     }
-    catch (const LibGit2pp::Exception& ex) {
+    catch (const Exception& ex) {
         FAIL(ex.what());
     }
 
     // TODO verify remote branches with unit test
 }
 
-TEST_CASE("remoteBranches")
+TEST_CASE_FIXTURE(FetchTest, "remoteBranches")
 {
-    LibGit2pp::Repository repo;
-
+    const auto testdir = getTestDir();
     const std::string repoPath = testdir + "/fetch_test/remote_branches";
 
-    QVERIFY(removeDir(repoPath));
-    sleep::ms(500);
+    CHECK(removeDir(repoPath));
+    using namespace std::chrono_literals;
+    std::this_thread::sleep_for(500ms);
 
-    std::stringList heads;
     try {
+        Repository repo;
         repo.init(repoPath);
         repo.remoteAdd("kde", HttpRemoteUrl);
-        heads = repo.remoteBranches("kde");
+        auto heads = repo.remoteBranches("kde");
+        MESSAGE("heads: ", heads);
+        CHECK(heads.size() > 1);
+        CHECK(std::find(heads.begin(), heads.end(), "master") != heads.end());
     }
-    catch (const LibGit2pp::Exception& ex) {
+    catch (const Exception& ex) {
         FAIL(ex.what());
     }
-
-    qDebug() << "heads" << heads;
-
-    QVERIFY(!heads.isEmpty());
-    QVERIFY(heads.size() > 1);
-    QVERIFY(heads.contains("master"));
 }
 
 TEST_SUITE_END();

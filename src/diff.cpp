@@ -37,11 +37,10 @@ size_t Diff::numDeltas() const
 
 DiffDelta Diff::delta(size_t index) const
 {
-    const git_diff_delta *delta = 0;
     if (d) {
-        delta = git_diff_get_delta(d.get(), index);
+        return git_diff_get_delta(d.get(), index);
     }
-    return DiffDelta(delta);
+    return nullptr;
 }
 
 }

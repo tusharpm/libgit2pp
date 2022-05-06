@@ -22,6 +22,7 @@
 #define LIBGIT2PP_REVWALK_H
 
 #include "git2.h"
+#include <memory>
 #include <string>
 #include "libgit2pp_config.h"
 #include "libgit2pp_types.h"
@@ -223,7 +224,7 @@ public:
      *
      * @return a copy of the repository being walked
      */
-    Repository* repository();
+    std::unique_ptr<Repository> repository() const;
 
     /**
      * Return the const repository on which this walker is operating.

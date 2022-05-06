@@ -20,133 +20,96 @@
 
 #include "TestHelpers.h"
 #include "doctest.h"
+#include <filesystem>
 
 using namespace LibGit2pp;
 
 TEST_SUITE_BEGIN("Repository");
 
-class TestRepository : public TestBase
+const std::string branchName = "new_branch";
+
+TEST_CASE_FIXTURE(TestBase, "RemoteUrlChanging")
 {
-public:
-    TestRepository() :
-        branchName("new_branch")
-    {}
-
-private slots:
-    virtual void init();
-    virtual void cleanup();
-
-    void testRemoteUrlChanging();
-    void testLookingUpRevision();
-    void testCreateBranch();
-    void testDeleteBranch();
-    void testShouldIgnore();
-    void testIdentitySetting();
-
-private:
-    const std::string branchName;
-    QPointer<Repository> repo;
-};
-
-void TestRepository::init()
-{
-    QVERIFY(!repo);
-    repo = new Repository;
-    QVERIFY(repo);
-}
-
-void TestRepository::cleanup()
-{
-    QVERIFY(repo);
-    delete repo;
-    QVERIFY(!repo);
-
-    TestBase::cleanup();
-}
-
-void TestRepository::testRemoteUrlChanging()
-{
-    repo->init(testdir);
+    Repository repo;
+    auto testdir = getTestDir();
+    repo.init(testdir);
 
     const std::string remoteName("origin");
-    repo->remoteAdd(remoteName, HttpRemoteUrl);
-    repo->remoteAdd(remoteName, GitRemoteUrl, true);
+    repo.remoteAdd(remoteName, HttpRemoteUrl);
+    repo.remoteAdd(remoteName, GitRemoteUrl, true);
 
-    QScopedPointer<Remote> remote(repo->remote(remoteName));
-    QCOMPARE(remote->url(), GitRemoteUrl);
+    auto remote = repo.remote(remoteName);
+    CHECK(remote->url() == GitRemoteUrl);
 }
 
-void TestRepository::testLookingUpRevision()
+TEST_CASE_FIXTURE(TestBase, "LookingUpRevision")
 {
-    repo->open(ExistingRepository);
+    Repository repo;
+    repo.open(ExistingRepository);
 
-    Object object = repo->lookupRevision("HEAD^{tree}");
-    QCOMPARE(Object::TreeType, object.type());
+    Object object = repo.lookupRevision("HEAD^{tree}");
+    CHECK(Object::TreeType == object.type());
 }
 
-void TestRepository::testCreateBranch()
+TEST_CASE_FIXTURE(TestBase, "CreateBranch")
 {
-    initTestRepo();
-    repo->open(testdir);
+    auto testdir = initTestRepo();
+    Repository repo;
+    repo.open(testdir);
 
-    OId head = repo->head().target();
-    QCOMPARE(repo->createBranch(branchName).target(), head);
-    QCOMPARE(repo->lookupShorthandRef(branchName).target(), head);
+    OId head = repo.head().target();
+    CHECK(repo.createBranch(branchName).target() == head);
+    CHECK(repo.lookupShorthandRef(branchName).target() == head);
 }
 
-void TestRepository::testDeleteBranch()
+TEST_CASE_FIXTURE(TestBase, "DeleteBranch")
 {
-    initTestRepo();
-    repo->open(testdir);
-    repo->createBranch(branchName);
-
-    repo->deleteBranch(branchName);
-    CHECK_THROWS_AS(repo->lookupShorthandRef(branchName), Exception);
+    auto testdir = initTestRepo();
+    Repository repo;
+    repo.open(testdir);
+    repo.createBranch(branchName);
+    repo.deleteBranch(branchName);
+    CHECK_THROWS_AS(repo.lookupShorthandRef(branchName), Exception);
 }
 
-void TestRepository::testShouldIgnore()
+TEST_CASE_FIXTURE(TestBase, "ShouldIgnore")
 {
-    initTestRepo();
-    repo->open(testdir);
+    auto testdir = initTestRepo();
+    Repository repo;
+    repo.open(testdir);
 
     const std::string ignoredFileName("Makefile");
     const std::string includedFileName("notignored.txt");
 
     // Relative paths
-    QVERIFY(repo->shouldIgnore(ignoredFileName));
-    QVERIFY(!repo->shouldIgnore(includedFileName));
+    CHECK(repo.shouldIgnore(ignoredFileName));
+    CHECK(!repo.shouldIgnore(includedFileName));
 
-    QDir dir(testdir);
-    std::string testDirName(dir.dirName());
+    std::filesystem::path dir{testdir};
+    auto testDirName = dir.filename();
 
     // Absolute paths
-    QVERIFY(repo->shouldIgnore(dir.absoluteFilePath(ignoredFileName)));
-    QVERIFY(!repo->shouldIgnore(dir.absoluteFilePath(includedFileName)));
+    CHECK(repo.shouldIgnore(dir / ignoredFileName));
+    CHECK(!repo.shouldIgnore(dir / includedFileName));
 
-    dir.cdUp();
+    dir = dir.parent_path();
 
     // Path containing .. but still leading up to the repository
-    QVERIFY(!repo->shouldIgnore(dir.absoluteFilePath(dir.absolutePath() + "/../" + dir.dirName() + "/" + testDirName + "/" + includedFileName)));
+    CHECK(!repo.shouldIgnore(dir / ".." / dir.filename() / testDirName / includedFileName));
 
     // Absolute path outside the repository
-    CHECK_THROWS_AS(repo->shouldIgnore(dir.absoluteFilePath(ignoredFileName)), Exception);
+    CHECK_THROWS_AS(repo.shouldIgnore(dir / ignoredFileName), Exception);
 }
 
-namespace LibGit2pp {
-
-bool operator==(const Repository::Identity &lhs, const Repository::Identity &rhs)
+TEST_CASE_FIXTURE(TestBase, "IdentitySetting")
 {
-    return lhs.name == rhs.name && lhs.email == rhs.email;
-}
-
-}
-
-void TestRepository::testIdentitySetting()
-{
+    auto testdir = getTestDir();
+    Repository repo;
+    repo.init(testdir);
     const Repository::Identity id{"name", "email"};
-    repo->init(testdir);
-    repo->setIdentity(id);
-    QCOMPARE(repo->identity(), id);
+    repo.setIdentity(id);
+    CHECK(repo.identity().name == id.name);
+    CHECK(repo.identity().email == id.email);
 }
 
 TEST_SUITE_END();
